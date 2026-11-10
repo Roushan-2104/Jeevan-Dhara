@@ -1,0 +1,62 @@
+{
+  "N1": {
+    "file": "audio/N1.wav",
+    "seconds": 5.695,
+    "text": "In India, when a doctor says, arrange blood, families start calling blood banks. One by one."
+  },
+  "N2": {
+    "file": "audio/N2.wav",
+    "seconds": 3.162,
+    "text": "Jeevan Dhara lets them simply ask. In their own language."
+  },
+  "N3": {
+    "file": "audio/N3.wav",
+    "seconds": 4.361,
+    "text": "No forms. No language menu. It asks only for what is missing, and listens again."
+  },
+  "N4": {
+    "file": "audio/N4.wav",
+    "seconds": 4.066,
+    "text": "Gnani's Prisma model turns speech into text, and detects the language by itself."
+  },
+  "N5": {
+    "file": "audio/N5.wav",
+    "seconds": 6.642,
+    "text": "It becomes structured data, checked in code, so a blood group is never guessed. Then the search widens, ring by ring."
+  },
+  "N6": {
+    "file": "audio/N6.wav",
+    "seconds": 2.933,
+    "text": "Gnani's Timbre voice answers, in the same language."
+  },
+  "N7": {
+    "file": "audio/N7.wav",
+    "seconds": 6.525,
+    "text": "Kannada. Tamil. Ten languages. Speech to text in about a second. Search, in one millisecond."
+  },
+  "N8": {
+    "file": "audio/N8.wav",
+    "seconds": 4.302,
+    "text": "Jeevan Dhara. Speak, and find blood. Built on Gnani Prisma and Timbre."
+  },
+  "hi_1": {
+    "file": "audio/hi_1.wav",
+    "seconds": 1.885,
+    "text": "मुझे खून चाहिए, जल्दी।"
+  },
+  "hi_2": {
+    "file": "audio/hi_2.wav",
+    "seconds": 3.553,
+    "text": "ओ नेगेटिव, दो यूनिट, जयनगर बेंगलुरु में।"
+  },
+  "kn_1": {
+    "file": "audio/kn_1.wav",
+    "seconds": 4.005,
+    "text": "ನನಗೆ ಬಿ ಪಾಸಿಟಿವ್ ರಕ್ತ ಬೇಕು, ಎರಡು ಯೂನಿಟ್, ಕೋರಮಂಗಲ ಬೆಂಗಳೂರು."
+  },
+  "ta_1": {
+    "file": "audio/ta_1.wav",
+    "seconds": 3.221,
+    "text": "எனக்கு ஏ பாசிட்டிவ் ரத்தம் வேண்டும், டி நகர் சென்னை."
+  }
+}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=390">
+<title>Jeevan Dhara — Category standard</title>
+<style>
+:root{--w:#FFFFFF;--ink:#1F2933;--mute:#6B7785;--line:#E4E7EB;--red:#D32F2F;--map:#E8EEF3}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:390px;height:844px;overflow:hidden;background:#F5F7FA;font:400 15px/1.45 system-ui,"Noto Sans","Noto Sans Devanagari",sans-serif;color:var(--ink)}
+header{background:var(--red);color:#fff;padding:16px;display:flex;justify-content:space-between;align-items:center}
+header b{font-size:19px}header span{font-size:13px;border:1px solid #fff8;border-radius:6px;padding:4px 10px}
+.search{background:var(--w);margin:12px;border-radius:10px;padding:12px;box-shadow:0 1px 3px #0001}
+.row{display:flex;gap:8px}.field{flex:1;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:14px}
+.field small{display:block;font-size:11px;color:var(--mute)}
+.btn{margin-top:10px;background:var(--red);color:#fff;text-align:center;padding:12px;border-radius:8px;font-weight:700}
+.map{height:190px;margin:0 12px;border-radius:10px;background:var(--map);position:relative;overflow:hidden}
+.map i{position:absolute;width:14px;height:14px;border-radius:50% 50% 50% 0;background:var(--red);transform:rotate(-45deg)}
+.map .me{width:14px;height:14px;border-radius:50%;background:#1976D2;border:3px solid #fff;left:170px;top:90px;transform:none}
+.list{margin:12px}
+.item{background:var(--w);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 3px #0001}
+.item h3{font-size:15px}.item p{font-size:13px;color:var(--mute)}
+.item a{color:var(--red);font-weight:700;text-decoration:none;font-size:14px}
+footer{position:absolute;bottom:0;left:0;right:0;padding:10px;text-align:center;font-size:12px;color:var(--mute);background:var(--w)}
+</style></head><body>
+<header><b>🩸 Jeevan Dhara</b><span>हिन्दी</span></header>
+<section class="search"><div class="row"><div class="field"><small>Blood group</small>O−</div><div class="field"><small>Units</small>2</div></div>
+<div class="row" style="margin-top:8px"><div class="field"><small>Location</small>Jayanagar, Bengaluru</div></div>
+<div class="btn">🎙 Speak or Search</div></section>
+<div class="map"><i style="left:120px;top:60px"></i><i style="left:230px;top:120px"></i><i style="left:80px;top:140px"></i><i class="me"></i></div>
+<section class="list">
+<div class="item"><div><h3>Sanjeevani Blood Centre</h3><p>2.4 km · O− 4 units</p></div><a href="#">Call</a></div>
+<div class="item"><div><h3>Kaveri Charitable Blood Bank</h3><p>3.9 km · O− 2 units</p></div><a href="#">Call</a></div>
+<div class="item"><div><h3>Basavanagudi Community Blood Bank</h3><p>6.2 km · O− 2 units</p></div><a href="#">Call</a></div>
+</section>
+<footer>Demo data · Emergency 108</footer>
+</body></html>

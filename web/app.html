@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jeevan Dhara · Find blood near you</title>
+<meta name="description" content="Ask for blood by voice in your language and find the nearest blood banks with stock.">
+<meta name="theme-color" content="#D32F2F">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&amp;display=swap">
+<link rel="stylesheet" href="app.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 2.1c-5.3 4.6-8 8.5-8 11.8 0 5 3.8 8.2 8 8.2s8-3.2 8-8.2c0-3.3-2.7-7.2-8-11.8z"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.49 6-3.31 6-6.72h-1.7z"/></symbol>
+  <symbol id="i-call" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.98.98 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></symbol>
+  <symbol id="i-directions" viewBox="0 0 24 24"><path d="M21.71 11.29l-9-9a1 1 0 0 0-1.41 0l-9 9a1 1 0 0 0 0 1.41l9 9a1 1 0 0 0 1.41 0l9-9a1 1 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4c0-.55.45-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/></symbol>
+  <symbol id="i-place" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></symbol>
+  <symbol id="i-my-location" viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm8.94 3A8.99 8.99 0 0 0 13 3.06V1h-2v2.06A8.99 8.99 0 0 0 3.06 11H1v2h2.06A8.99 8.99 0 0 0 11 20.94V23h2v-2.06A8.99 8.99 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></symbol>
+  <symbol id="i-language" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.92 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.99 7.99 0 0 1 5.08 16zm2.95-8H5.08a7.99 7.99 0 0 1 4.33-3.56A15.65 15.65 0 0 0 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.35.16-2h4.68c.09.65.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></symbol>
+  <symbol id="i-schedule" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></symbol>
+  <symbol id="i-warning" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></symbol>
+  <symbol id="i-error" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></symbol>
+  <symbol id="i-person" viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></symbol>
+  <symbol id="i-donors" viewBox="0 0 24 24"><path d="M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7a6.98 6.98 0 0 1-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09A5.99 5.99 0 0 1 16.5 3C19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></symbol>
+  <symbol id="i-add" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></symbol>
+  <symbol id="i-remove" viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></symbol>
+</svg>
+
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+<header class="appbar">
+  <div class="appbar-in">
+    <a class="brand" href="/"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-drop"/></svg><span>Jeevan Dhara</span></a>
+    <button id="langBtn" class="hdr-btn" type="button" aria-haspopup="dialog" aria-label="Language: English">
+      <svg class="icon i-globe" aria-hidden="true" focusable="false"><use href="#i-language"/></svg>
+      <span id="langName">English</span>
+      <svg class="icon i-small" aria-hidden="true" focusable="false"><use href="#i-expand"/></svg>
+    </button>
+    <button id="acctBtn" class="hdr-btn hdr-icon" type="button" aria-haspopup="dialog" aria-label="Sign in" data-i18n-aria="sign_in">
+      <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-person"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections" data-i18n-aria="nav_label">
+  <div class="tabs-in" role="tablist">
+    <a class="tab" href="/" id="tab-find-link">
+      <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mic"/></svg><span data-i18n="tab_find">Find blood</span>
+    </a>
+    <button class="tab" role="tab" type="button" id="tab-donate" data-tab="donate" aria-controls="panel-donate" aria-selected="false" tabindex="-1">
+      <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-heart"/></svg><span data-i18n="tab_donate">Donate</span>
+    </button>
+    <button class="tab" role="tab" type="button" id="tab-requests" data-tab="requests" aria-controls="panel-requests" aria-selected="false" tabindex="-1">
+      <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-history"/></svg><span data-i18n="tab_requests">My requests</span>
+    </button>
+  </div>
+</nav>
+
+<main id="main" class="main" tabindex="-1">
+
+  <!-- Find blood -->
+  <section id="panel-find" class="panel find" role="tabpanel" aria-labelledby="tab-find">
+    <h1 class="vh" data-i18n="find_title">Find blood near you</h1>
+
+    <div id="findAlert" class="alert" role="alert" hidden></div>
+
+    <form id="searchForm" class="card search" novalidate>
+      <h2 class="card-title" data-i18n="search_title">What blood do you need?</h2>
+      <div class="row2">
+        <div class="field" id="fGroup">
+          <label for="group" data-i18n="label_group">Blood group</label>
+          <div class="select-wrap">
+            <select id="group" name="blood_group" class="input select-group">
+              <option value="" data-i18n="group_choose">Choose</option>
+              <option value="A+">A+</option>
+              <option value="A-">A−</option>
+              <option value="B+">B+</option>
+              <option value="B-">B−</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB−</option>
+              <option value="O+">O+</option>
+              <option value="O-">O−</option>
+            </select>
+            <svg class="icon select-chev" aria-hidden="true" focusable="false"><use href="#i-expand"/></svg>
+          </div>
+        </div>
+        <div class="field" id="fUnits">
+          <label for="units" data-i18n="label_units">Units</label>
+          <div class="stepper">
+            <button type="button" class="step-btn" id="unitsDown" aria-label="Fewer units" data-i18n-aria="units_less" aria-controls="units">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-remove"/></svg>
+            </button>
+            <input id="units" name="units" type="number" inputmode="numeric" min="1" max="10" step="1" value="1">
+            <button type="button" class="step-btn" id="unitsUp" aria-label="More units" data-i18n-aria="units_more" aria-controls="units">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-add"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="field" id="fPlace">
+        <label for="place" data-i18n="label_location">Location</label>
+        <div class="loc">
+          <button type="button" class="loc-chip" id="gpsBtn" aria-pressed="false">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-my-location"/></svg>
+            <span class="loc-chip-text" data-i18n="use_location">Use my location</span>
+          </button>
+          <input id="place" name="place" class="input" type="text" autocomplete="off" enterkeyhint="search" placeholder="Area, hospital or landmark" data-i18n-ph="place_ph" aria-describedby="locNote">
+        </div>
+        <p id="locNote" class="field-note" data-i18n="loc_explain">To find the nearest blood bank, allow location.</p>
+      </div>
+
+      <div class="speak-row">
+        <button id="speakBtn" class="speak" type="button" data-state="idle" aria-describedby="speakHint">
+          <span class="speak-mic" aria-hidden="true"><span class="speak-ring"></span><svg class="icon" focusable="false"><use href="#i-mic"/></svg></span>
+          <span class="speak-text">
+            <span id="speakLabel" class="speak-label" data-i18n="speak_hold">Hold to speak</span>
+            <span id="speakTimer" class="speak-timer" hidden>0:00 / 0:30</span>
+          </span>
+        </button>
+        <button id="cancelRec" class="speak-cancel" type="button" aria-label="Cancel recording" data-i18n-aria="rec_cancel" hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"/></svg>
+        </button>
+      </div>
+      <p id="speakHint" class="hint" data-i18n="speak_hint">Or tap once to start, and tap again to send.</p>
+
+      <div class="search-alt">
+        <span data-i18n="or">or</span>
+        <button id="searchBtn" type="submit" class="text-btn">
+          <span data-i18n="search_btn">Search</span>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg>
+        </button>
+      </div>
+    </form>
+
+    <section id="heard" class="heard" aria-labelledby="heardTitle" hidden>
+      <h2 id="heardTitle" class="sec-title" data-i18n="heard_title">What we heard</h2>
+      <ul id="heardChips" class="chips"></ul>
+      <p id="heardNote" class="note-warn" hidden>
+        <svg class="icon i-small" aria-hidden="true" focusable="false"><use href="#i-warning"/></svg>
+        <span data-i18n="heard_check">We're not sure about the marked items. Tap one to change it.</span>
+      </p>
+      <p id="transcript" class="transcript" dir="auto"></p>
+    </section>
+
+    <section id="clarify" class="card clarify" aria-labelledby="clarifyQ" hidden>
+      <h2 id="clarifyQ" class="card-title" tabindex="-1"></h2>
+      <div id="clarifyGroups" class="group-grid" hidden></div>
+      <div id="clarifyLoc" class="clarify-loc" hidden>
+        <button type="button" id="clarifyGps" class="btn btn-secondary btn-block">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-my-location"/></svg>
+          <span data-i18n="use_location">Use my location</span>
+        </button>
+        <form id="clarifyPlaceForm" class="inline-form" novalidate>
+          <label for="clarifyPlace" class="vh" data-i18n="label_location">Location</label>
+          <input id="clarifyPlace" class="input" type="text" autocomplete="off" enterkeyhint="search" placeholder="Area, hospital or landmark" data-i18n-ph="place_ph">
+          <button type="submit" class="btn btn-primary" data-i18n="search_btn">Search</button>
+        </form>
+      </div>
+      <p id="clarifyOther" class="caption" data-i18n="clarify_other" hidden>Use the form above to answer, then tap Search.</p>
+    </section>
+
+    <section id="player" class="player" aria-label="Spoken reply" data-i18n-aria="player_label" hidden>
+      <audio id="replyAudio" preload="auto"></audio>
+      <div id="playerCtl" class="player-ctl">
+        <button id="playBtn" class="icon-btn play-btn" type="button" aria-label="Play reply" data-i18n-aria="play">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-play"/></svg>
+        </button>
+        <div class="player-track" aria-hidden="true"><div id="playerBar" class="player-bar"></div></div>
+        <span id="playerTime" class="player-time">0:00</span>
+        <button id="speedBtn" class="speed-btn" type="button" aria-label="Playback speed 1×">1×</button>
+        <button id="replayBtn" class="icon-btn" type="button" aria-label="Replay" data-i18n-aria="replay">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-replay"/></svg>
+        </button>
+      </div>
+      <p id="replyText" class="reply-text" dir="auto"></p>
+    </section>
+
+    <section id="summary" class="summary" aria-labelledby="summaryTitle" hidden>
+      <h2 id="summaryTitle" class="sec-heading" tabindex="-1"></h2>
+      <p id="ringLine" class="ring-line"></p>
+      <p id="reqLine" class="caption"></p>
+    </section>
+
+    <div id="mapWrap" class="map-wrap" hidden>
+      <div id="map" class="map" role="region" aria-label="Map of blood banks" data-i18n-aria="map_label"></div>
+    </div>
+
+    <div id="skeleton" class="cards" aria-hidden="true" hidden>
+      <div class="bank skel"><div class="bar w60"></div><div class="bar w40"></div><div class="bar w80"></div><div class="bar-row"><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="bank skel"><div class="bar w70"></div><div class="bar w40"></div><div class="bar w60"></div><div class="bar-row"><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="bank skel"><div class="bar w50"></div><div class="bar w40"></div><div class="bar w70"></div><div class="bar-row"><div class="bar"></div><div class="bar"></div></div></div>
+    </div>
+
+    <section id="results" class="results" aria-labelledby="summaryTitle" hidden>
+      <ol id="exactList" class="cards"></ol>
+      <h3 id="compatTitle" class="compat-title" data-i18n="compat_title" hidden>Compatible groups — doctor must confirm</h3>
+      <ol id="compatList" class="cards" hidden></ol>
+    </section>
+
+    <section id="donorBox" class="card donor-box" aria-label="Nearby donors" data-i18n-aria="donors_label" hidden>
+      <p class="donor-line"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-donors"/></svg><span id="donorText"></span></p>
+      <button id="askDonorsBtn" type="button" class="btn btn-secondary btn-block" data-i18n="ask_donors">Ask nearby donors</button>
+      <p id="donorMsg" class="ok-line" role="status" hidden></p>
+    </section>
+
+    <section id="empty" class="card empty" aria-labelledby="emptyTitle" hidden>
+      <h2 id="emptyTitle" class="sec-heading" tabindex="-1"></h2>
+      <p id="emptyRing" class="ring-line"></p>
+      <div class="btn-row">
+        <button id="extendBtn" type="button" class="btn btn-primary" data-i18n="extend">Search up to 50 km</button>
+        <button id="emptyDonorsBtn" type="button" class="btn btn-secondary" data-i18n="ask_donors">Ask nearby donors</button>
+      </div>
+      <p id="emptyDonorMsg" class="ok-line" role="status" hidden></p>
+      <p class="caption em-intro" data-i18n="em_intro">If the patient is in danger, call now.</p>
+      <div class="emergency-big">
+        <a class="em-link" id="emAmb" href="tel:108"><span class="em-num" data-em="ambulance">108</span><span data-i18n="ambulance">Ambulance</span></a>
+        <a class="em-link" id="emHelp" href="tel:104"><span class="em-num" data-em="helpline">104</span><span data-i18n="helpline_long">Health helpline</span></a>
+      </div>
+    </section>
+  </section>
+
+  <!-- Donate -->
+  <section id="panel-donate" class="panel narrow" role="tabpanel" aria-labelledby="tab-donate" hidden>
+    <div id="donateAlert" class="alert" role="alert" hidden></div>
+
+    <div id="donateIntro" class="card intro">
+      <h1 class="title" data-i18n="donate_title">Help someone near you</h1>
+      <p class="lead" data-i18n="donate_intro">When blood banks near you run out, we ask willing donors. We only share your number if you agree, every time.</p>
+      <ul class="facts">
+        <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span data-i18n="fact_limit">At most 2 requests a day</span></li>
+        <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span data-i18n="fact_pause">Turn availability off any time</span></li>
+        <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span data-i18n="fact_private">Seekers never see your exact location</span></li>
+      </ul>
+      <button id="donateStart" type="button" class="btn btn-primary btn-block" data-i18n="donate_start">Register as a donor</button>
+    </div>
+
+    <form id="donorForm" class="card donor-form" novalidate hidden>
+      <h1 class="title" data-i18n="donor_form_title">Your donor details</h1>
+
+      <fieldset class="field" id="dfGroup" aria-describedby="errGroup">
+        <legend data-i18n="label_group">Blood group</legend>
+        <div class="group-grid" id="donorGroups">
+          <label class="opt"><input type="radio" name="dgroup" value="A+"><span>A+</span></label>
+          <label class="opt"><input type="radio" name="dgroup" value="A-"><span>A−</span></label>
+          <label class="opt"><input type="radio" name="dgroup" value="B+"><span>B+</span></label>
+          <label class="opt"><input type="radio" name="dgroup" value="B-"><span>B−</span></label>
+          <label class="opt"><input type="radio" name="dgroup" value="AB+"><span>AB+</span></label>
+          <label class="opt"><input type="radio" name="dgroup" value="AB-"><span>AB−</span></label>
+          <label class="opt"><input type="radio" name="dgroup" value="O+"><span>O+</span></label>
+          <label class="opt"><input type="radio" name="dgroup" value="O-"><span>O−</span></label>
+        </div>
+        <p id="errGroup" class="field-err" hidden></p>
+      </fieldset>
+
+      <div class="field" id="dfPlace">
+        <label for="dPlace" data-i18n="label_area">Your area</label>
+        <div class="loc">
+          <button type="button" class="loc-chip" id="dGpsBtn" aria-pressed="false">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-my-location"/></svg>
+            <span class="loc-chip-text" data-i18n="use_location">Use my location</span>
+          </button>
+          <input id="dPlace" class="input" type="text" autocomplete="off" placeholder="Area or locality" data-i18n-ph="area_ph" aria-describedby="dLocNote errPlace">
+        </div>
+        <p id="dLocNote" class="field-note" data-i18n="area_note">We use your area to match nearby requests. It is never shown to anyone.</p>
+        <p id="errPlace" class="field-err" hidden></p>
+      </div>
+
+      <fieldset class="field">
+        <legend data-i18n="label_langs">Languages you speak</legend>
+        <div id="donorLangs" class="chip-set"></div>
+      </fieldset>
+
+      <div class="field">
+        <label for="lastDonation" data-i18n="label_last">Last donation date (optional)</label>
+        <input id="lastDonation" class="input" type="date">
+      </div>
+
+      <fieldset class="field">
+        <legend data-i18n="label_sex">Sex (optional)</legend>
+        <div class="chip-set">
+          <label class="opt opt-sm"><input type="radio" name="dsex" value="male"><span data-i18n="sex_male">Male</span></label>
+          <label class="opt opt-sm"><input type="radio" name="dsex" value="female"><span data-i18n="sex_female">Female</span></label>
+          <label class="opt opt-sm"><input type="radio" name="dsex" value=""><span data-i18n="sex_none">Prefer not to say</span></label>
+        </div>
+        <p class="field-note" data-i18n="sex_note">Only used to work out when you can donate again.</p>
+      </fieldset>
+
+      <fieldset class="field checks" id="dfChecks" aria-describedby="errChecks">
+        <legend class="vh" data-i18n="label_confirm">Confirm</legend>
+        <label class="check"><input type="checkbox" id="ageOk"><span data-i18n="age_ok">I am 18–65 years old</span></label>
+        <label class="check"><input type="checkbox" id="weightOk"><span data-i18n="weight_ok">I weigh at least 45 kg</span></label>
+        <label class="check"><input type="checkbox" id="consentOk"><span data-i18n="consent">I agree to be asked when someone near me needs blood. My number is shared only if I say yes.</span></label>
+        <p id="errChecks" class="field-err" hidden></p>
+      </fieldset>
+
+      <p class="caption" data-i18n="donor_verify_note">We'll check your phone number with a one-time code before saving.</p>
+      <button type="submit" id="donorSubmit" class="btn btn-primary btn-block" data-i18n="donor_submit">Register</button>
+    </form>
+
+    <div id="donorStatus" class="card donor-status" hidden>
+      <div class="status-head">
+        <span id="dsGroup" class="group-badge">O+</span>
+        <div>
+          <h1 class="title" data-i18n="donor_registered">You're a registered donor</h1>
+          <p id="dsState" class="status-line"></p>
+        </div>
+      </div>
+      <label class="switch-row">
+        <span class="switch-text">
+          <span class="switch-label" data-i18n="availability">Available to donate</span>
+          <span class="caption" data-i18n="fact_limit">At most 2 requests a day</span>
+        </span>
+        <input type="checkbox" role="switch" id="availSwitch">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- My requests -->
+  <section id="panel-requests" class="panel narrow" role="tabpanel" aria-labelledby="tab-requests" hidden>
+    <h1 class="title panel-title" data-i18n="requests_title">My requests</h1>
+    <div id="reqAlert" class="alert" role="alert" hidden></div>
+    <ol id="reqList" class="req-list"></ol>
+    <div id="reqEmpty" class="empty-state" hidden>
+      <svg class="icon icon-xl" aria-hidden="true" focusable="false"><use href="#i-history"/></svg>
+      <p data-i18n="requests_empty">Your requests appear here for 24 hours.</p>
+      <button id="reqFind" type="button" class="btn btn-secondary" data-i18n="tab_find">Find blood</button>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <span data-i18n="demo_data">Demo data</span>
+    <span class="dot" aria-hidden="true">·</span>
+    <a id="footAmb" href="tel:108"><span data-i18n="emergency">Emergency</span>&nbsp;<b data-em="ambulance">108</b></a>
+    <span class="dot" aria-hidden="true">·</span>
+    <a id="footHelp" href="tel:104"><span data-i18n="helpline">Helpline</span>&nbsp;<b data-em="helpline">104</b></a>
+  </div>
+</footer>
+
+<div id="live" class="vh" aria-live="polite" aria-atomic="true"></div>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<dialog id="langSheet" class="sheet" aria-labelledby="langTitle">
+  <div class="sheet-body">
+    <div class="sheet-head">
+      <h2 id="langTitle" data-i18n="lang_title">Choose language</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close" data-i18n-aria="close">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"/></svg>
+      </button>
+    </div>
+    <p class="caption" data-i18n="lang_note">This changes the app's text. Replies are spoken in the language you speak.</p>
+    <ul id="langList" class="lang-list"></ul>
+  </div>
+</dialog>
+
+<dialog id="authSheet" class="sheet" aria-labelledby="authTitle">
+  <div class="sheet-body">
+    <div class="sheet-head">
+      <h2 id="authTitle" data-i18n="signin_title">Sign in</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close" data-i18n-aria="close">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"/></svg>
+      </button>
+    </div>
+
+    <form id="phoneStep" class="auth-step" novalidate>
+      <p class="lead" data-i18n="signin_why">We use your phone number to keep your requests and donor details private.</p>
+      <div class="field">
+        <label for="phone" data-i18n="label_phone">Mobile number</label>
+        <div class="phone-field">
+          <span class="cc" aria-hidden="true">+91</span>
+          <input id="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="10" placeholder="98765 43210" aria-describedby="phoneErr">
+        </div>
+        <p id="phoneErr" class="field-err" hidden></p>
+      </div>
+      <button type="submit" id="sendOtpBtn" class="btn btn-primary btn-block" data-i18n="send_code">Send code</button>
+    </form>
+
+    <form id="codeStep" class="auth-step" novalidate hidden>
+      <p id="codeSentTo" class="lead"></p>
+      <fieldset class="otp" aria-describedby="codeErr">
+        <legend class="vh" data-i18n="label_code">6-digit code</legend>
+        <input class="otp-box" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-label="Digit 1 of 6">
+        <input class="otp-box" type="text" inputmode="numeric" autocomplete="off" maxlength="1" aria-label="Digit 2 of 6">
+        <input class="otp-box" type="text" inputmode="numeric" autocomplete="off" maxlength="1" aria-label="Digit 3 of 6">
+        <input class="otp-box" type="text" inputmode="numeric" autocomplete="off" maxlength="1" aria-label="Digit 4 of 6">
+        <input class="otp-box" type="text" inputmode="numeric" autocomplete="off" maxlength="1" aria-label="Digit 5 of 6">
+        <input class="otp-box" type="text" inputmode="numeric" autocomplete="off" maxlength="1" aria-label="Digit 6 of 6">
+      </fieldset>
+      <p id="codeErr" class="field-err" hidden></p>
+      <p id="demoNote" class="note-info" hidden>
+        <svg class="icon i-small" aria-hidden="true" focusable="false"><use href="#i-error"/></svg>
+        <span data-i18n="demo_code_note">In demo mode the code is printed in the server console.</span>
+      </p>
+      <button type="submit" id="verifyBtn" class="btn btn-primary btn-block" data-i18n="verify">Verify</button>
+      <div class="auth-links">
+        <button type="button" id="resendBtn" class="text-btn" disabled>Resend in 0:30</button>
+        <button type="button" id="changePhone" class="text-btn" data-i18n="change_number">Change number</button>
+      </div>
+    </form>
+
+    <div id="acctStep" class="auth-step" hidden>
+      <p class="lead"><span data-i18n="signed_in_as">Signed in as</span> <b id="acctPhone" class="num"></b></p>
+      <button type="button" id="logoutBtn" class="btn btn-secondary btn-block" data-i18n="sign_out">Sign out</button>
+    </div>
+  </div>
+</dialog>
+
+<template id="tplBank">
+  <li class="bank" tabindex="-1">
+    <div class="bank-top">
+      <span class="bank-rank" aria-hidden="true"></span>
+      <h3 class="bank-name"></h3>
+      <span class="bank-dist"></span>
+    </div>
+    <p class="bank-stock"><span class="group-chip"></span><span class="bank-units"></span></p>
+    <p class="bank-updated"></p>
+    <p class="bank-meta"></p>
+    <div class="bank-actions">
+      <a class="btn btn-primary bank-call"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-call"/></svg><span class="lbl-call">Call</span></a>
+      <a class="btn btn-secondary bank-dir" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-directions"/></svg><span class="lbl-dir">Directions</span></a>
+    </div>
+  </li>
+</template>
+</body>
+</html>

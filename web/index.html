@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#D32F2F">
+<meta name="description" content="Jeevan Dhara: say what blood you need, in your language, and hear the nearest blood banks that have it.">
+<title>Jeevan Dhara · Talk to find blood</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="voice.css">
+<script type="module" src="voice.js"></script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 2.1c-5.3 4.6-8 8.5-8 11.8 0 5 3.8 8.2 8 8.2s8-3.2 8-8.2c0-3.3-2.7-7.2-8-11.8z"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.49 6-3.31 6-6.72h-1.7z"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><path d="M7 7h10v10H7z"/></symbol>
+  <symbol id="i-call" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.98.98 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></symbol>
+  <symbol id="i-directions" viewBox="0 0 24 24"><path d="M21.71 11.29l-9-9a1 1 0 0 0-1.41 0l-9 9a1 1 0 0 0 0 1.41l9 9a1 1 0 0 0 1.41 0l9-9a1 1 0 0 0 0-1.41zM14 14.5V12h-4v3H8v-4c0-.55.45-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/></symbol>
+  <symbol id="i-place" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></symbol>
+  <symbol id="i-schedule" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></symbol>
+  <symbol id="i-warning" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09A5.99 5.99 0 0 1 16.5 3C19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7a6.98 6.98 0 0 1-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M20 5H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></symbol>
+  <symbol id="i-donors" viewBox="0 0 24 24"><path d="M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06A9 9 0 0 0 14 3.23z"/></symbol>
+</svg>
+
+<header class="bar">
+  <div class="bar-in">
+    <a class="brand" href="/" aria-label="Jeevan Dhara home">
+      <svg class="icon" aria-hidden="true"><use href="#i-drop"/></svg><span>Jeevan Dhara</span>
+    </a>
+    <nav class="bar-nav" aria-label="More">
+      <button id="newChat" class="bar-btn" type="button" hidden>
+        <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg><span data-t="new">New</span>
+      </button>
+      <a class="bar-btn" href="app.html#donate"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span data-t="donate">Donate</span></a>
+      <a class="bar-btn" href="app.html#requests" aria-label="My requests" data-t-aria="requests"><svg class="icon" aria-hidden="true"><use href="#i-history"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="convo" aria-label="Conversation">
+  <section id="intro" class="intro">
+    <svg class="intro-drop" aria-hidden="true"><use href="#i-drop"/></svg>
+    <h1>Need blood? Just tell me.</h1>
+    <p class="intro-hi" lang="hi">बोलिए कौन सा खून चाहिए और कहाँ। किसी भी भाषा में।</p>
+    <p class="intro-eg">“O negative, 2 units, near Jayanagar, Bengaluru”</p>
+  </section>
+  <ol id="thread" class="thread" aria-live="polite" aria-relevant="additions"></ol>
+</main>
+
+<div class="dock">
+  <form id="typeForm" class="type-form" hidden>
+    <label class="vh" for="typeIn" data-t="type_label">Type your request</label>
+    <input id="typeIn" type="text" maxlength="400" autocomplete="off" enterkeyhint="send" placeholder="O+ 2 units near Andheri, Mumbai">
+    <button class="type-send" type="submit" aria-label="Send"><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg></button>
+  </form>
+  <div class="dock-row">
+    <button id="typeBtn" class="side-btn" type="button" aria-label="Type instead" data-t-aria="type_instead" aria-pressed="false">
+      <svg class="icon" aria-hidden="true"><use href="#i-keyboard"/></svg>
+    </button>
+    <button id="talk" class="talk" type="button" data-state="idle" aria-label="Tap to talk">
+      <span class="talk-ring" aria-hidden="true"></span>
+      <svg class="icon talk-icon" aria-hidden="true"><use href="#i-mic"/></svg>
+    </button>
+    <span class="side-btn side-spacer" aria-hidden="true"></span>
+  </div>
+  <p id="status" class="status" role="status">Tap and speak · <span lang="hi">दबाइए और बोलिए</span></p>
+  <p class="foot">
+    <span data-t="demo">Demo data</span> ·
+    <a href="tel:108"><span data-t="emergency">Emergency</span> <b>108</b></a> ·
+    <a href="tel:104"><span data-t="helpline">Helpline</span> <b>104</b></a>
+  </p>
+</div>
+
+<audio id="player" preload="none"></audio>
+
+<template id="tpl-bank">
+  <li class="bank">
+    <div class="bank-top"><span class="rank num"></span><h3 class="bank-name"></h3><span class="bank-km num"></span></div>
+    <div class="bank-stock"><span class="grp"></span><span class="units"></span><span class="compat" hidden></span></div>
+    <p class="bank-when"><svg class="icon i-sm" aria-hidden="true"><use href="#i-schedule"/></svg><span></span></p>
+    <p class="bank-meta"></p>
+    <div class="bank-acts">
+      <a class="btn btn-red act-call"><svg class="icon" aria-hidden="true"><use href="#i-call"/></svg><span></span></a>
+      <a class="btn btn-line act-dir" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-directions"/></svg><span></span></a>
+    </div>
+  </li>
+</template>
+</body>
+</html>

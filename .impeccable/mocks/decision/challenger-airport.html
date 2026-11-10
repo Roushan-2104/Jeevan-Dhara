@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=390">
+<title>Jeevan Dhara — Terminal Wayfinding</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--y:#FFC917;--k:#141414;--w:#FFFFFF;--g:#2B2B2B;--m:#8C8C8C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:390px;height:844px;overflow:hidden;background:#F4F4F2;font:400 16px/1.35 Hind,"Noto Sans Devanagari",system-ui,sans-serif;color:var(--k);font-variant-numeric:tabular-nums}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--k);color:var(--w)}
+header b{font-weight:700;font-size:19px}header span{font-size:13px;border:1px solid #fff6;padding:4px 10px;border-radius:4px}
+.band{background:var(--y);padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center}
+.band .pic{width:44px;height:44px;background:var(--k);color:var(--w);display:grid;place-items:center;font-weight:700;font-size:18px;grid-row:1/3}
+.band .num{font-size:64px;font-weight:700;line-height:.9;letter-spacing:-.02em}
+.band .num small{font-size:20px}
+.band p{font-size:17px;font-weight:600}
+.band .sub{grid-column:1/-1;font-size:14px;font-weight:600;display:flex;gap:10px;margin-top:6px}
+.band .sub a{background:var(--k);color:var(--w);padding:8px 16px;text-decoration:none;font-weight:700}
+.mic{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--w)}
+.mic span{width:48px;height:48px;border-radius:50%;background:var(--k);flex:none}
+.mic small{display:block;color:var(--m);font-size:13px}
+.next{margin:12px 16px 6px;font-size:13px;font-weight:700;color:var(--m)}
+.mini{display:flex;align-items:center;gap:12px;margin:0 16px 8px;background:var(--w);border-left:8px solid var(--y);padding:10px 12px}
+.mini b{font-size:26px;font-weight:700;min-width:64px}.mini b small{font-size:13px}
+.mini h3{font-size:15px;font-weight:600}.mini p{font-size:13px;color:var(--m)}
+footer{position:absolute;bottom:0;left:0;right:0;background:var(--k);color:var(--w);padding:10px 16px;font-size:12px;display:flex;justify-content:space-between}
+</style></head><body>
+<header><b>Jeevan Dhara</b><span>हिन्दी ▾</span></header>
+<section class="band"><span class="pic">O−</span><span class="num">2.4<small> km</small></span><p>Sanjeevani Blood Centre · 4 units</p>
+<div class="sub"><a href="#">Call</a><a href="#">Directions →</a><span>updated 08:40</span></div></section>
+<div class="mic"><span></span><div><b>Hold to speak</b><small>“मुझे O negative खून चाहिए, 2 यूनिट, जयनगर में”</small></div></div>
+<p class="next">None within 5 km · 3 banks within 10 km</p>
+<div class="mini"><b>3.9<small> km</small></b><div><h3>Kaveri Charitable Blood Bank</h3><p>O− 2 units · 09:15</p></div></div>
+<div class="mini"><b>6.2<small> km</small></b><div><h3>Basavanagudi Community Blood Bank</h3><p>O− 2 units · yesterday</p></div></div>
+<footer><span>Demo data · synthetic</span><span>Emergency 108 · 104</span></footer>
+</body></html>

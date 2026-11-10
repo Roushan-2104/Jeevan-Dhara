@@ -1,0 +1,28 @@
+services:
+  jeevan-dhara:
+    build: .
+    image: jeevan-dhara:latest
+    container_name: jeevan-dhara
+    # Keys come from .env on your machine. They are read at start and never baked into the image.
+    env_file:
+      - path: .env
+        required: false   # without keys the app still runs: typed requests work, voice is off
+    ports:
+      # Local only. Browsers allow the microphone on http://localhost without HTTPS.
+      - "127.0.0.1:8000:8000"
+    volumes:
+      # Database and the voice cache survive restarts.
+      - jeevan-data:/srv/data
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /srv/media:uid=10001,gid=10001
+      - /srv/tmp:uid=10001,gid=10001
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  jeevan-data:

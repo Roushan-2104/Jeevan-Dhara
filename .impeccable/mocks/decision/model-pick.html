@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=390">
+<title>Jeevan Dhara — Railway Station Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700;800;900&family=Noto+Sans+Devanagari:wght@600;800&family=Noto+Sans+Kannada:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--y:#FFD200;--k:#111111;--w:#FFFFFF;--g:#5E5E5E;--l:#E6E6E6;--act:#C1272D}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:390px;height:844px;overflow:hidden;background:var(--w);font:400 15px/1.4 "Noto Sans","Noto Sans Devanagari",system-ui,sans-serif;color:var(--k);font-variant-numeric:tabular-nums}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--k);color:var(--w)}
+header b{font-weight:900;font-size:18px}header span{font-size:13px;border:1px solid #fff6;border-radius:6px;padding:4px 10px}
+.board{background:var(--y);margin:12px;border:4px solid var(--k);padding:12px 14px;text-align:center}
+.board .dv{font-family:"Noto Sans Devanagari";font-weight:800;font-size:26px;line-height:1.2}
+.board .en{font-weight:900;font-size:24px;letter-spacing:.02em;text-transform:uppercase}
+.board .kn{font-family:"Noto Sans Kannada";font-weight:700;font-size:18px}
+.board p{font-size:13px;font-weight:700;margin-top:6px}
+.mic{display:flex;align-items:center;gap:12px;margin:0 12px 12px;padding:12px;border:2px solid var(--k)}
+.mic span{width:52px;height:52px;border-radius:50%;background:var(--act);flex:none}
+.mic small{display:block;color:var(--g);font-size:12px}
+h2{margin:0 16px 6px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--g)}
+.row{display:grid;grid-template-columns:72px 1fr auto;align-items:center;margin:0 12px 8px;border:2px solid var(--k)}
+.row .km{background:var(--y);height:100%;display:grid;place-items:center;font-weight:900;font-size:22px;line-height:1;border-right:2px solid var(--k);text-align:center}
+.row .km small{display:block;font-size:11px;font-weight:700}
+.row div{padding:8px 10px}.row h3{font-size:14px;font-weight:800}.row p{font-size:12px;color:var(--g)}
+.row a{margin-right:10px;background:var(--act);color:var(--w);font-weight:800;font-size:13px;padding:8px 12px;text-decoration:none}
+footer{position:absolute;bottom:0;left:0;right:0;background:var(--k);color:var(--w);padding:10px 16px;font-size:12px;display:flex;justify-content:space-between}
+</style></head><body>
+<header><b>Jeevan Dhara</b><span>हिन्दी ▾</span></header>
+<section class="board"><p class="dv">ओ नेगेटिव · 2 यूनिट</p><p class="en">O Negative · 2 Units</p><p class="kn">ಜಯನಗರ</p><p>Request JD-0417 · found within 10 km</p></section>
+<div class="mic"><span></span><div><b>Hold to speak</b><small>बोलिए — any language</small></div></div>
+<h2>Nearest first</h2>
+<div class="row"><span class="km">2.4<small>KM</small></span><div><h3>Sanjeevani Blood Centre</h3><p>O− 4 units · updated 08:40</p></div><a href="#">CALL</a></div>
+<div class="row"><span class="km">3.9<small>KM</small></span><div><h3>Kaveri Charitable Blood Bank</h3><p>O− 2 units · updated 09:15</p></div><a href="#">CALL</a></div>
+<div class="row"><span class="km">6.2<small>KM</small></span><div><h3>Basavanagudi Community Blood Bank</h3><p>O− 2 units · updated yesterday</p></div><a href="#">CALL</a></div>
+<footer><span>Demo data · synthetic</span><span>Emergency 108 · 104</span></footer>
+</body></html>

@@ -1,0 +1,27 @@
+# Secrets never go into the image; they are passed at run time with --env-file.
+.env
+.env.*
+!.env.example
+
+.git
+.gitignore
+.venv
+.impeccable
+.pytest_cache
+**/__pycache__
+**/*.pyc
+
+# Runtime data
+data
+media
+tmp
+
+# Not needed to run the app
+video
+docs
+tests
+**/node_modules
+*.md
+Dockerfile
+docker-compose.yml
+.dockerignore

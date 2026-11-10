@@ -1,0 +1,27 @@
+# Secrets: keys live only in .env on your machine
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Runtime data (rebuilt on start: synthetic database, voice cache, short-lived audio)
+*.db
+*.db-shm
+*.db-wal
+data/
+media/
+tmp/
+
+# Node (demo film tooling)
+node_modules/
+
+# Local tooling
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
