@@ -1,87 +1,187 @@
-# Jeevan Dhara (जीवन धारा)
+<div align="center">
 
-Ask for blood by voice, in your own language, and hear back the nearest blood banks that have it.
-Works in the browser as a tap-and-talk voice bot (a WhatsApp channel is built in, off by default). Built on **Gnani Prisma v3.0** (speech-to-text) and **Gnani Timbre v2.5**
-(text-to-speech), with Groq-hosted Qwen for understanding. All data is synthetic demo data.
+# जीवन धारा · Jeevan Dhara
 
-Docs: [Architecture](docs/ARCHITECTURE.md) · [PRD](docs/PRD.md) · [Security](docs/SECURITY.md) ·
-[Design](docs/DESIGN.md) · [Project memory](docs/MEMORY.md)
+### Say what blood you need. Hear where to get it.
 
-## What it does for a worried person
+A voice-first blood finder for India. Tap once, speak in your own language,<br>
+and it tells you the nearest blood banks that have what you need.
 
-- **Speak or type** in Hindi, Hinglish, English, Kannada, Tamil, Telugu, Malayalam, Marathi, Bengali, Gujarati or Punjabi.
-  The whole screen (buttons, status, results) switches to the language you spoke.
-- **Nearest banks first**, widening 5 → 10 → 15 → 20 km, with one big **Call nearest blood bank** button.
-- **Share with family**: one tap sends the bank names, phone numbers and directions through WhatsApp or the phone's share sheet.
-- **Cancel any time**: tap the big button while it is thinking. A request that takes over 25 seconds stops by itself.
-- **No internet?** The screen still opens and shows call buttons for **108** (ambulance) and **104** (health helpline).
+**[Try the live app](https://jeevan-dhara-itjf.onrender.com)** &nbsp;·&nbsp; **[One-page pitch](PITCH.md)** &nbsp;·&nbsp; **[Architecture](docs/ARCHITECTURE.md)**
 
-## Run it with Docker (any OS)
+![Gnani Prisma v3.0](https://img.shields.io/badge/speech_to_text-Gnani_Prisma_v3.0-D32F2F)
+![Gnani Timbre v2.5](https://img.shields.io/badge/text_to_speech-Gnani_Timbre_v2.5-D32F2F)
+![11 languages](https://img.shields.io/badge/languages-11-1F2933)
+![89 tests passing](https://img.shields.io/badge/tests-89_passing-2E7D32)
+![Docker](https://img.shields.io/badge/runs_in-Docker-1F2933)
 
-Needs only Docker. ffmpeg and Python are inside the image.
+<br>
+
+<img src="docs/assets/explainer.gif" alt="A spoken request travels into the app and comes back as text" width="760">
+
+</div>
+
+<br>
+
+> The live app runs on a free server that sleeps when idle. The first visit can take about a minute to wake it.
+> All blood bank data is synthetic demo data.
+
+## Contents
+
+- [Why this exists](#why-this-exists)
+- [What it does](#what-it-does)
+- [See it](#see-it)
+- [How it works](#how-it-works)
+- [Tech stack](#tech-stack)
+- [Run it yourself](#run-it-yourself)
+- [Host it](#host-it)
+- [Settings](#settings)
+- [Tests](#tests)
+- [Project layout](#project-layout)
+- [Safety and privacy](#safety-and-privacy)
+- [Known limits](#known-limits)
+- [More documentation](#more-documentation)
+
+## Why this exists
+
+When someone you love needs blood at 2 AM, you are standing in a hospital corridor with a phone in a shaking hand.
+Most blood finders ask you to pick a state, a district and a blood group from dropdowns, then solve a captcha, in English.
+The people who need blood most urgently are often the least able to fill that form.
+
+Jeevan Dhara removes the form. You say it the way you would say it to a person:
+
+> "Mere papa ko O positive blood chahiye, do unit, Indiranagar ke paas."
+
+A few seconds later it answers aloud, in your language, with the nearest blood banks and one big button to call the closest one.
+
+## What it does
+
+| | |
+|---|---|
+| **Speak or type, in 11 languages** | Hindi, Hinglish, English, Kannada, Tamil, Telugu, Malayalam, Marathi, Bengali, Gujarati and Punjabi. There is no language menu: it detects what you spoke, and the whole screen switches to it. |
+| **Nearest banks first** | It looks within 5 km, then 10, 15 and 20 km, and shows distance, units in stock, opening hours, a call button and directions for each bank. |
+| **Asks when something is missing** | If you leave out the blood group or the place, it asks one follow-up question by voice and keeps what you already said. |
+| **Answers aloud** | The reply is spoken in the language you used, so you do not have to read anything. |
+| **Share with family** | One tap writes a message with the bank names, phone numbers and a directions link, and hands it to WhatsApp or the phone's share sheet. |
+| **Cancel any time** | Tap the big button while it is working. A request that takes over 25 seconds stops by itself. |
+| **Works when the network does not** | With no internet, the screen still opens and puts **108** (ambulance) and **104** (health helpline) call buttons on top. |
+
+## See it
+
+<div align="center">
+<img src="docs/assets/screens.png" alt="Five screens: start, searching, results in Hindi, results in Kannada, and the no-internet screen" width="100%">
+<br>
+<sub>Start · Searching · Answer in Hindi · The same request in Kannada · No internet</sub>
+</div>
+
+## How it works
+
+```mermaid
+flowchart LR
+    A([You speak]) --> B[Gnani Prisma v3.0<br>speech to text,<br>language detected]
+    B --> C[Language model<br>blood group, units,<br>component, place]
+    C --> D{Anything<br>missing?}
+    D -- yes --> E[Ask one follow-up<br>question, by voice]
+    E --> A
+    D -- no --> F[Search in code<br>5, 10, 15, 20 km]
+    F --> G[Reply built from facts,<br>then checked]
+    G --> H[Gnani Timbre v2.5<br>text to speech]
+    H --> I([You hear the answer])
+```
+
+1. **Listen.** The browser records your voice. The server converts it with ffmpeg and sends it to **Gnani Prisma v3.0**, which returns the text and the detected language.
+2. **Understand.** A language model fills a strict form: blood group, units, component and place. It can only choose from fixed values, so a spoken sentence cannot make it do anything else.
+3. **Ask, if needed.** If the blood group or place is missing, the app asks one question and merges your answer with what you said before.
+4. **Search.** Plain, tested Python finds matching stock near you, including compatible blood groups, widening the radius step by step. No model is involved in the search.
+5. **Answer.** The facts of the reply (names, distances, units, phone numbers) are built by code. The wording is checked against those facts before **Gnani Timbre v2.5** speaks it.
+
+### How fast it is
+
+Measured on one request to the hosted build (free plan, one small shared CPU):
+
+| Step | Time |
+|---|---|
+| Speech to text (Gnani Prisma) | 366 ms |
+| Understanding the request | 299 ms |
+| Searching blood banks | 0.5 ms |
+| Audio conversion on the server | 1,798 ms |
+| **Total, request to answer** | **2,467 ms** |
+
+Audio conversion is the slow step on the free server; it is much faster on a normal machine.
+
+## Tech stack
+
+| Layer | Choice |
+|---|---|
+| Speech to text | **Gnani Prisma v3.0**, automatic language detection |
+| Text to speech | **Gnani Timbre v2.5**, one voice per language |
+| Understanding | A language model hosted on Groq, limited to a strict schema, with a fallback model |
+| Server | Python 3.12, FastAPI, Uvicorn |
+| Data | SQLite, seeded with synthetic blood banks, stock and donors |
+| Audio | ffmpeg |
+| Frontend | Plain HTML, CSS and JavaScript. No build step, so it loads fast on low-end phones |
+| Packaging and hosting | Docker, Render |
+
+## Run it yourself
+
+You need API keys for [Gnani](https://app.gnani.ai/voice) and [Groq](https://console.groq.com). Without keys the app still runs: typed requests work and voice is off.
+
+### With Docker (any OS)
 
 ```bash
-cp .env.example .env        # then add GNANI_API_KEY and GROQ_API_KEY (keys stay in .env only)
+cp .env.example .env        # then add GNANI_API_KEY and GROQ_API_KEY
 docker compose up --build -d
 ```
 
-Open http://localhost:8000. Stop it with `docker compose down`. Useful checks:
+Open http://localhost:8000. Stop it with `docker compose down`.
 
 ```bash
-docker compose ps                                              # shows "healthy" when ready
-docker compose exec jeevan-dhara python -m app.check_keys      # checks keys without printing them
-docker compose logs -f jeevan-dhara
+docker compose ps                                           # shows "healthy" when ready
+docker compose exec jeevan-dhara python -m app.check_keys   # checks the keys without printing them
 ```
 
-The keys are read from `.env` when the container starts; they are never copied into the image
-(`.dockerignore` blocks it). The container runs as a non-root user on a read-only filesystem; only
-`/srv/data` (database and voice cache, a named volume) is kept between restarts. The port is bound to
-`127.0.0.1`, so the app is reachable from this machine only. Browsers allow the microphone on
-`http://localhost`; on any other address you need HTTPS in front of it.
+### Without Docker (Windows)
 
-## Put it on the internet (Docker + HTTPS)
+Needs Python 3.12 and `ffmpeg` on your PATH.
 
-Phones allow the microphone only over HTTPS, so a public copy needs a domain. `docker-compose.prod.yml` adds
-[Caddy](https://caddyserver.com), which gets and renews the HTTPS certificate by itself.
+```powershell
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements-dev.txt
+copy .env.example .env      # then add GNANI_API_KEY and GROQ_API_KEY
+.venv\Scripts\python -m uvicorn app.main:app --port 8000
+```
 
-1. Rent a small Linux server (1 GB RAM is enough) and install Docker.
-2. Point your domain's DNS **A record** at the server's IP address. Open ports 80 and 443 in its firewall.
-3. Copy this project to the server and create `.env` there (from `.env.example`). Add:
-   `DOMAIN=your.domain`, your API keys, and a fixed `SECRET_KEY` and `FERNET_KEY` (`python -m app.keys` prints new ones).
-4. Start it:
+Open http://127.0.0.1:8000, tap the mic and speak. Donor registration and request history are at `/app.html`.
+
+## Host it
+
+Phones allow the microphone only over HTTPS, so a public copy needs HTTPS in front of it.
+
+**Render (simplest).** This repo includes [`render.yaml`](render.yaml). In Render, create a new web service from the repo, choose Docker, and add `GNANI_API_KEY` and `GROQ_API_KEY`. Render provides HTTPS and the public address.
+
+**Your own server.** [`docker-compose.prod.yml`](docker-compose.prod.yml) adds [Caddy](https://caddyserver.com), which gets and renews the HTTPS certificate by itself. Point your domain at the server, set `DOMAIN=your.domain` in `.env`, then:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 ```
 
-Open `https://your.domain`. To update later: copy the new files and run the same command again.
-The database lives in the `jeevan-data` volume and the certificates in `caddy-data`; `docker compose down` keeps both
-(`down -v` deletes them). Run one copy of the app only: the request limits and sessions-in-progress live in its memory.
+Run one copy of the app only: the request limits and conversations in progress live in its memory.
 
-## Run it without Docker (Windows)
+## Settings
 
-```powershell
-python -m venv .venv
-.venv\Scripts\python -m pip install -r requirements-dev.txt   # app + pytest (the Docker image installs requirements.txt only)
-# .env: copy .env.example, then add GNANI_API_KEY and GROQ_API_KEY (keys stay in .env only)
-.venv\Scripts\python -m app.check_keys        # checks keys without printing them
-.venv\Scripts\python -m uvicorn app.main:app --port 8000
-```
+All settings are read from `.env` (or the host's environment). Keys never go into the Docker image or into git.
 
-Open http://127.0.0.1:8000, tap the mic and speak, e.g. "O negative, do unit, Jayanagar mein".
-Without keys the app still runs (typed requests work; voice is disabled). Requires `ffmpeg` on PATH.
-Donor registration and request history are at `/app.html`.
+| Setting | Needed | What it is |
+|---|---|---|
+| `GNANI_API_KEY` | For voice | Gnani key for Prisma and Timbre |
+| `GROQ_API_KEY` | For understanding speech | Groq key for the language model |
+| `SECRET_KEY` | For a public copy | Signs sessions. `python -m app.keys` prints a new one |
+| `PUBLIC_BASE_URL` | For a public copy | The `https://` address of the app. Turns on secure cookies |
+| `DEMO_MODE` | Optional | `true` marks every screen as demo data |
+| `REQUIRE_LOGIN` | Optional | `true` asks for a phone OTP before use |
+| `WHATSAPP_ENABLED` and `TWILIO_*` | Optional | Turns on the WhatsApp voice-note channel, which is built but off by default |
 
-## WhatsApp (optional, off by default)
-
-The WhatsApp channel is built but disabled (`WHATSAPP_ENABLED=false`) so the demo needs nothing paid or public.
-To turn it on: set `WHATSAPP_ENABLED=true` and the Twilio keys in `.env`, then:
-
-1. Twilio console → Messaging → Try it out → WhatsApp sandbox. Join from your phone with the code shown.
-2. Start a tunnel: `cloudflared tunnel --url http://127.0.0.1:8000` and put the https URL in `.env` as `PUBLIC_BASE_URL`.
-3. Sandbox settings → "When a message comes in": `<PUBLIC_BASE_URL>/webhooks/twilio` (POST). Restart the server.
-4. Send a voice note: "O negative chahiye, do unit, Jayanagar mein." Commands: `MORE` (search 30/50 km), `DONORS`,
-   `YES JD-XXXX` / `NO` (donor replies), `STOP`, `DELETE`.
+See [`.env.example`](.env.example) for the full list.
 
 ## Tests
 
@@ -89,8 +189,60 @@ To turn it on: set `WHATSAPP_ENABLED=true` and the Twilio keys in `.env`, then:
 .venv\Scripts\python -m pytest -q
 ```
 
-## Demo scenario
+89 tests cover the search (radius steps, blood compatibility, place lookup) and the API (requests, follow-ups, limits, security headers). They run without any API key.
 
-The synthetic data has no O− within 5 km of Jayanagar, Bengaluru, and three banks with O− within 10 km
-(one with stale stock), so the widening search is visible. Phone numbers start with `+91 00000`
-and cannot reach anyone.
+## Project layout
+
+```
+app/
+  main.py        Web endpoints, WhatsApp webhook, security headers
+  pipeline.py    The request flow: merge, ask, search, reply
+  gnani.py       Gnani Prisma (speech to text) and Timbre (text to speech)
+  llm.py         Strict-schema extraction and translation of fixed replies
+  search.py      Radius search, blood compatibility, place lookup
+  replies.py     Reply text built from facts
+  security.py    Hashing, signing, rate limits, audit log
+  audio.py       ffmpeg helpers
+  db.py, seed.py SQLite storage and the synthetic data
+web/             The app: HTML, CSS, JavaScript, translations, offline support
+tests/           89 automated tests
+docs/            Architecture, product, security and design documents
+Dockerfile, docker-compose.yml, docker-compose.prod.yml, render.yaml
+```
+
+## Safety and privacy
+
+- **The voice does not invent facts.** Bank names, distances, units and phone numbers come from code and are checked before they are spoken.
+- **Speech cannot hijack it.** The language model only fills a fixed form. It does not write free replies or run commands.
+- **It always points to real help.** Every answer with results ends with the 108 emergency number, and every screen keeps 108 and 104 in view.
+- **Limits protect the service.** Per-person, per-address and daily request caps, a 2 MB and 30-second limit on audio, and a timeout on every conversion.
+- **Little is kept.** Phone numbers are stored as hashes, locations are rounded, and reply audio is deleted after 10 minutes.
+- **Keys stay on the server.** They are read from the environment at start, never sent to the browser, and never committed.
+
+The full threat model is in [docs/SECURITY.md](docs/SECURITY.md).
+
+## Known limits
+
+- **The data is synthetic.** Blood banks, stock and phone numbers are made up for the demo. Phone numbers start with `+91 00000` and cannot reach anyone.
+- **Very short answers can be misheard.** A two-word reply such as "O positive" is sometimes transcribed wrongly. A full sentence works reliably.
+- **Hinglish is answered in Hindi.** Speech to text writes Hinglish in Devanagari, so the app treats it as Hindi and replies in its Hindi voice.
+- **The free server is slow to wake** and has no saved disk, so the demo data is rebuilt on every start.
+- **WhatsApp is built but off.** It needs a Twilio account and a public address to run, so the demo leaves it switched off.
+
+## More documentation
+
+| Document | What is in it |
+|---|---|
+| [PITCH.md](PITCH.md) | The one-page pitch |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Components, the voice pipeline, data model |
+| [docs/PRD.md](docs/PRD.md) | Who it is for and what it must do |
+| [docs/SECURITY.md](docs/SECURITY.md) | Threat model and controls |
+| [docs/DESIGN.md](docs/DESIGN.md) | Visual and interaction design |
+
+---
+
+<div align="center">
+
+Built by **Roushan Sharma** for the Great Indian AI Internship Challenge by Gnani.ai.
+
+</div>
