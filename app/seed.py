@@ -200,6 +200,8 @@ def seed(force: bool = False) -> None:
                  city, "hi-IN", 1 if rng.random() < 0.8 else 0, now.isoformat()),
             )
     del conn
+    from . import search  # local import: search is not needed to load this module
+    search.forget_places()
 
 
 if __name__ == "__main__":

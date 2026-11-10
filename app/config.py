@@ -43,8 +43,10 @@ class Settings(BaseSettings):
 
     max_upload_bytes: int = 2 * 1024 * 1024
     max_audio_seconds: float = 30.0
-    user_requests_per_hour: int = 10
-    ip_requests_per_hour: int = 30
+    # A stressed person retries and asks follow-ups, and a hospital or a reverse proxy can put many
+    # people behind one address, so these are generous. The daily cap protects the API credits.
+    user_requests_per_hour: int = 60
+    ip_requests_per_hour: int = 300
     global_requests_per_day: int = 1500
     media_ttl_seconds: int = 600
 

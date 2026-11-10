@@ -1,0 +1,41 @@
+# Public hosting: adds HTTPS in front of the app. Use it together with docker-compose.yml:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Needs DOMAIN=your.domain in .env, and that domain's DNS A record pointing at this server.
+services:
+  jeevan-dhara:
+    environment:
+      # https here turns on secure cookies and HSTS in the app.
+      PUBLIC_BASE_URL: https://${DOMAIN:?Set DOMAIN in .env, for example DOMAIN=blood.example.org}
+      # Only Caddy can reach the app, so its X-Forwarded-For header is trusted.
+      # This lets the per-visitor request limit see the real visitor, not Caddy.
+      FORWARDED_ALLOW_IPS: "*"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: jeevan-caddy
+    restart: unless-stopped
+    depends_on:
+      jeevan-dhara:
+        condition: service_healthy
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data        # HTTPS certificates; keep this volume
+      - caddy-config:/config
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  caddy-data:
+  caddy-config:

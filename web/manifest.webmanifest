@@ -1,0 +1,11 @@
+{
+  "name": "Jeevan Dhara · Talk to find blood",
+  "short_name": "Jeevan Dhara",
+  "description": "Say what blood you need, in your language, and hear the nearest blood banks that have it.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F5F7FA",
+  "theme_color": "#D32F2F",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

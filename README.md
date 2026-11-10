@@ -7,6 +7,15 @@ Works in the browser as a tap-and-talk voice bot (a WhatsApp channel is built in
 Docs: [Architecture](docs/ARCHITECTURE.md) · [PRD](docs/PRD.md) · [Security](docs/SECURITY.md) ·
 [Design](docs/DESIGN.md) · [Project memory](docs/MEMORY.md)
 
+## What it does for a worried person
+
+- **Speak or type** in Hindi, Hinglish, English, Kannada, Tamil, Telugu, Malayalam, Marathi, Bengali, Gujarati or Punjabi.
+  The whole screen (buttons, status, results) switches to the language you spoke.
+- **Nearest banks first**, widening 5 → 10 → 15 → 20 km, with one big **Call nearest blood bank** button.
+- **Share with family**: one tap sends the bank names, phone numbers and directions through WhatsApp or the phone's share sheet.
+- **Cancel any time**: tap the big button while it is thinking. A request that takes over 25 seconds stops by itself.
+- **No internet?** The screen still opens and shows call buttons for **108** (ambulance) and **104** (health helpline).
+
 ## Run it with Docker (any OS)
 
 Needs only Docker. ffmpeg and Python are inside the image.
@@ -30,11 +39,30 @@ The keys are read from `.env` when the container starts; they are never copied i
 `127.0.0.1`, so the app is reachable from this machine only. Browsers allow the microphone on
 `http://localhost`; on any other address you need HTTPS in front of it.
 
+## Put it on the internet (Docker + HTTPS)
+
+Phones allow the microphone only over HTTPS, so a public copy needs a domain. `docker-compose.prod.yml` adds
+[Caddy](https://caddyserver.com), which gets and renews the HTTPS certificate by itself.
+
+1. Rent a small Linux server (1 GB RAM is enough) and install Docker.
+2. Point your domain's DNS **A record** at the server's IP address. Open ports 80 and 443 in its firewall.
+3. Copy this project to the server and create `.env` there (from `.env.example`). Add:
+   `DOMAIN=your.domain`, your API keys, and a fixed `SECRET_KEY` and `FERNET_KEY` (`python -m app.keys` prints new ones).
+4. Start it:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+```
+
+Open `https://your.domain`. To update later: copy the new files and run the same command again.
+The database lives in the `jeevan-data` volume and the certificates in `caddy-data`; `docker compose down` keeps both
+(`down -v` deletes them). Run one copy of the app only: the request limits and sessions-in-progress live in its memory.
+
 ## Run it without Docker (Windows)
 
 ```powershell
 python -m venv .venv
-.venv\Scripts\python -m pip install -r requirements.txt
+.venv\Scripts\python -m pip install -r requirements-dev.txt   # app + pytest (the Docker image installs requirements.txt only)
 # .env: copy .env.example, then add GNANI_API_KEY and GROQ_API_KEY (keys stay in .env only)
 .venv\Scripts\python -m app.check_keys        # checks keys without printing them
 .venv\Scripts\python -m uvicorn app.main:app --port 8000

@@ -2,80 +2,97 @@
 // Language is detected from speech; location comes from GPS or the place you name.
 // All server/user text is set with textContent (no innerHTML).
 
+import { STR, UI_OF } from './voice-i18n.js';
+
 const $ = (s, r = document) => r.querySelector(s);
 const MAX_MS = 30000;       // Gnani STT limit per clip
 const NO_SPEECH_MS = 7000;  // give up if nothing is said
 const SILENCE_MS = 1300;    // end of turn after this much quiet
 const MAX_AUTO_TURNS = 3;   // hands-free follow-ups in a row
 
-const STR = {
-  en: {
-    idle: 'Tap and speak', listening: 'Listening… tap to send', thinking: 'Finding blood near you…',
-    speaking: 'Speaking… tap to interrupt', no_speech: "I didn't hear anything. Tap and speak again.",
-    mic_denied: 'Microphone is blocked. Allow it in the browser, or type instead.', no_mic: 'Voice is not supported in this browser. Please type instead.',
-    you: 'You', bot: 'Jeevan Dhara', replay: 'Play', call: 'Call', directions: 'Directions', units: (n) => `${n} unit${n === 1 ? '' : 's'}`,
-    updated: (t) => `Updated ${t}`, stale: 'Updated over a day ago · call first', today: 'today', compat: 'Compatible group · doctor must confirm',
-    ring_none: (a) => `None within ${a} km`, ring_found: (n, r) => `${n} within ${r} km`, approx: 'near the place you said', gps: 'near your location',
-    donors: (n, r) => `${n} willing donor${n === 1 ? '' : 's'} within ${r} km`, ask_donors: 'Ask nearby donors', wider: 'Search up to 50 km',
-    become_donor: 'Become a donor', new: 'New', donate: 'Donate', requests: 'My requests', type_instead: 'Type instead',
-    type_label: 'Type your request', demo: 'Demo data', emergency: 'Emergency', helpline: 'Helpline', network: 'No connection. Please try again.',
-    voice_off: 'Voice is not available right now. Please type your request.', voice_note: '(voice message)',
-    map_label: 'Map of the search area and blood banks',
-    call_nearest: 'Call nearest blood bank', call_nearest_sub: (name, km) => `${name} · ${km} km`,
-  },
-  hi: {
-    idle: 'दबाइए और बोलिए', listening: 'सुन रहे हैं… भेजने के लिए दबाइए', thinking: 'आपके पास खून खोज रहे हैं…',
-    speaking: 'बोल रहे हैं… रोकने के लिए दबाइए', no_speech: 'कुछ सुनाई नहीं दिया। फिर से दबाकर बोलिए।',
-    mic_denied: 'माइक्रोफ़ोन बंद है। ब्राउज़र में अनुमति दें, या लिखकर भेजें।', no_mic: 'इस ब्राउज़र में आवाज़ नहीं चलती। कृपया लिखकर भेजें।',
-    you: 'आप', bot: 'जीवन धारा', replay: 'सुनें', call: 'फ़ोन करें', directions: 'रास्ता', units: (n) => `${n} यूनिट`,
-    updated: (t) => `अपडेट: ${t}`, stale: 'एक दिन से पुरानी जानकारी · पहले फ़ोन करें', today: 'आज', compat: 'मिलता-जुलता ग्रुप · डॉक्टर से पक्का करें',
-    ring_none: (a) => `${a} किमी में कोई नहीं`, ring_found: (n, r) => `${r} किमी में ${n}`, approx: 'आपकी बताई जगह के पास', gps: 'आपकी लोकेशन के पास',
-    donors: (n, r) => `${r} किमी में ${n} डोनर मदद को तैयार`, ask_donors: 'पास के डोनर से पूछें', wider: '50 किमी तक खोजें',
-    become_donor: 'डोनर बनें', new: 'नया', donate: 'रक्तदान', requests: 'मेरे अनुरोध', type_instead: 'लिखकर भेजें',
-    type_label: 'अपना अनुरोध लिखें', demo: 'डेमो डेटा', emergency: 'इमरजेंसी', helpline: 'हेल्पलाइन', network: 'इंटरनेट नहीं है। फिर कोशिश करें।',
-    voice_off: 'अभी आवाज़ उपलब्ध नहीं है। कृपया लिखकर भेजें।', voice_note: '(आवाज़ संदेश)',
-    map_label: 'खोज का इलाका और ब्लड बैंक का नक्शा',
-    call_nearest: 'सबसे पास वाले ब्लड बैंक को फ़ोन करें', call_nearest_sub: (name, km) => `${name} · ${km} किमी`,
-  },
-};
-const HI_UI = new Set(['hi-IN', 'mr-IN']);
 
-const state = { ui: 'en', requestId: null, autoTurns: 0, coords: null, geoAsked: false, busy: false };
+const REQUEST_TIMEOUT_MS = 25000; // stop waiting for an answer after this long
+const SLOW_MS = 8000;             // say "still working" after this long
+
+const state = { ui: 'en', requestId: null, autoTurns: 0, coords: null, geoAsked: false, busy: false, abort: null };
 const talk = $('#talk');
 const statusEl = $('#status');
 const thread = $('#thread');
 const player = $('#player');
+const offlineEl = $('#offline');
 const s = (k, ...a) => { const v = STR[state.ui][k] ?? STR.en[k]; return typeof v === 'function' ? v(...a) : v; };
 
 // ---------- UI language follows the language the person speaks ----------
-function setUi(lang) {
-  const ui = HI_UI.has(lang) ? 'hi' : 'en';
+function setUi(lang, save = true) {
+  const ui = UI_OF[lang];
+  if (!ui) return;
+  if (save) { try { localStorage.setItem('jd.lang', lang); } catch { /* private mode */ } }
   if (ui === state.ui) return;
   state.ui = ui;
-  document.documentElement.lang = ui === 'hi' ? 'hi' : 'en';
+  document.documentElement.lang = ui;
   document.querySelectorAll('[data-t]').forEach((n) => { n.textContent = s(n.dataset.t); });
   document.querySelectorAll('[data-t-aria]').forEach((n) => n.setAttribute('aria-label', s(n.dataset.tAria)));
-  try { localStorage.setItem('jd.lang', ui === 'hi' ? 'hi-IN' : 'en-IN'); } catch { /* private mode */ }
+  // The English screen keeps one Hindi line, so a Hindi reader sees at once that they can just speak.
+  const sub = $('#introSub');
+  if (ui === 'en') { sub.lang = 'hi'; sub.textContent = STR.hi.intro_sub; } else { sub.removeAttribute('lang'); sub.textContent = s('intro_sub'); }
+}
+
+// First paint: the language used last time, else the phone's first Indian language.
+function initUi() {
+  let lang = null;
+  try { lang = localStorage.getItem('jd.lang'); } catch { /* private mode */ }
+  if (!UI_OF[lang]) {
+    lang = null;
+    for (const l of navigator.languages || []) {
+      const base = String(l).toLowerCase().split('-')[0];
+      if (base === 'en') break;
+      if (UI_OF[`${base}-IN`]) { lang = `${base}-IN`; break; }
+    }
+  }
+  if (lang) setUi(lang, false);
+  if (state.ui !== 'en') setState('idle');
 }
 
 function setState(mode, text) {
   talk.dataset.state = mode;
-  talk.setAttribute('aria-label', s(mode === 'idle' ? 'idle' : mode));
+  talk.setAttribute('aria-label', s(mode));
   statusEl.textContent = text ?? s(mode);
-  const icon = $('use', talk);
-  icon.setAttribute('href', mode === 'listening' || mode === 'speaking' ? '#i-stop' : '#i-mic');
-  talk.disabled = mode === 'thinking';
+  $('use', talk).setAttribute('href', mode === 'idle' ? '#i-mic' : '#i-stop'); // every busy state can be stopped
 }
 
+// ---------- no internet: the phone can still call ----------
+function setOffline(on) { offlineEl.hidden = !on; }
+window.addEventListener('offline', () => setOffline(true));
+window.addEventListener('online', () => setOffline(false));
+
 // ---------- API ----------
-async function api(path, { json, form } = {}) {
-  const opts = { method: json || form ? 'POST' : 'GET', credentials: 'same-origin', headers: {} };
+// Every request ends: by answer, by the person's cancel (signal), or by the timeout.
+async function api(path, { json, form, signal } = {}) {
+  const ctl = new AbortController();
+  let why = null;
+  const stop = (reason) => { why = why || reason; ctl.abort(); };
+  const onCancel = () => stop('cancel');
+  if (signal?.aborted) stop('cancel'); else signal?.addEventListener('abort', onCancel, { once: true });
+  const timer = setTimeout(() => stop('timeout'), REQUEST_TIMEOUT_MS);
+  const opts = { method: json || form ? 'POST' : 'GET', credentials: 'same-origin', headers: {}, signal: ctl.signal };
   if (json) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(json); }
   if (form) opts.body = form;
   let res;
-  try { res = await fetch(path, opts); } catch { throw new Error(s('network')); }
   let body = null;
-  try { body = await res.json(); } catch { /* empty */ }
+  try {
+    res = await fetch(path, opts);
+    try { body = await res.json(); } catch (e) { if (why) throw e; /* else: empty body */ }
+  } catch {
+    const err = new Error(s(why === 'timeout' ? 'timeout' : why === 'cancel' ? 'cancelled' : 'network'));
+    err.cancelled = why === 'cancel';
+    err.timeout = why === 'timeout';
+    if (!why) setOffline(true);
+    throw err;
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', onCancel);
+  }
+  setOffline(false);
   if (!res.ok) {
     const err = new Error((body && typeof body.detail === 'string' && body.detail) || s('network'));
     err.status = res.status;
@@ -173,7 +190,7 @@ function onRecorded() {
   fd.append('audio', blob, MIME.includes('mp4') ? 'voice.m4a' : 'voice.webm');
   if (state.requestId) fd.append('request_id', state.requestId);
   if (state.coords) { fd.append('lat', state.coords.lat); fd.append('lng', state.coords.lng); fd.append('accuracy', state.coords.accuracy); }
-  converse(() => api('/api/ask', { form: fd }), null);
+  converse((signal) => api('/api/ask', { form: fd, signal }), null);
 }
 
 // ---------- conversation ----------
@@ -182,10 +199,13 @@ async function converse(call, typedText) {
   $('#newChat').hidden = false;
   const userMsg = addUser(typedText);
   const wait = addTyping();
-  setState('thinking');
+  const ctl = new AbortController();
+  state.abort = ctl;
   state.busy = true;
+  setState('thinking');
+  const slow = setTimeout(() => { if (state.abort === ctl) setState('thinking', s('slow')); }, SLOW_MS);
   try {
-    const resp = await call();
+    const resp = await call(ctl.signal);
     wait.remove();
     state.requestId = resp.request_id || state.requestId;
     const heard = resp.heard || {};
@@ -195,11 +215,22 @@ async function converse(call, typedText) {
     speak(resp);
   } catch (e) {
     wait.remove();
-    addBotError(e.status === 503 ? s('voice_off') : e.message);
-    if (e.status === 503) showTyping(true);
-    setState('idle');
+    if (e.cancelled) {
+      // The person stopped it: leave no half-finished turn behind.
+      userMsg.parentElement.remove();
+      if (state.abort === ctl) {
+        if (!thread.childElementCount) { $('#intro').hidden = false; $('#newChat').hidden = true; }
+        setState('idle', s('cancelled'));
+      }
+    } else {
+      if (!typedText) setUserText(userMsg, s('voice_note'));
+      addBotError(e.status === 429 ? s('too_many') : e.status === 503 ? s('voice_off') : e.message);
+      if (e.status === 503) showTyping(true);
+      setState('idle');
+    }
   } finally {
-    state.busy = false;
+    clearTimeout(slow);
+    if (state.abort === ctl) { state.abort = null; state.busy = false; }
   }
 }
 
@@ -280,7 +311,7 @@ function renderResults(resp) {
   ring.append(strong, el('span', '', `· ${sr.approximate ? s('approx') : s('gps')}`));
   box.append(ring);
   // The one thing a frightened person needs next: a single big tap that rings the nearest bank.
-  if (results.length) box.append(callNearest(results[0]));
+  if (results.length) box.append(callNearest(results[0]), shareBtn(resp));
 
   let pins = null;
   if (sr.center) {
@@ -318,7 +349,7 @@ function renderResults(resp) {
   }
   if (!results.length && sr.can_extend) {
     acts.append(actionBtn('i-place', s('wider'), async () => {
-      await converse(() => api(`/api/search/${encodeURIComponent(resp.request_id)}/extend`, { json: {} }), s('wider'));
+      await converse((signal) => api(`/api/search/${encodeURIComponent(resp.request_id)}/extend`, { json: {}, signal }), s('wider'));
     }));
   }
   if (acts.childElementCount) box.append(acts);
@@ -399,7 +430,7 @@ async function drawMap(mapEl, resp, pins) {
       requestAnimationFrame(step);
     });
     const lbl = L.marker([c[0], c[1] + km / (111 * Math.cos((c[0] * Math.PI) / 180))], {
-      icon: L.divIcon({ className: 'ring-label', html: el('span', km === found ? 'is-found' : '', `${km} km`), iconSize: [52, 20], iconAnchor: [26, 10] }),
+      icon: L.divIcon({ className: 'ring-label', html: el('span', km === found ? 'is-found' : '', `${km} ${s('km')}`), iconSize: [64, 20], iconAnchor: [32, 10] }),
       interactive: false, keyboard: false,
     });
     lbl.addTo(map);
@@ -410,8 +441,8 @@ function bankCard(r) {
   const li = $('#tpl-bank').content.firstElementChild.cloneNode(true);
   $('.rank', li).textContent = r.rank;
   $('.bank-name', li).textContent = r.name;
-  $('.bank-km', li).textContent = `${Number(r.distance_km).toFixed(1)} km`;
-  $('.grp', li).textContent = String(r.blood_group || '').replace('-', '−');
+  $('.bank-km', li).textContent = kmText(r);
+  $('.grp', li).textContent = grpText(r.blood_group);
   $('.units', li).textContent = s('units', r.units);
   if (r.match === 'compatible') { const c = $('.compat', li); c.hidden = false; c.textContent = s('compat'); }
   const when = $('.bank-when', li);
@@ -421,19 +452,60 @@ function bankCard(r) {
   call.href = telHref(r.phone);
   $('span', call).textContent = s('call');
   const dir = $('.act-dir', li);
-  dir.href = `https://www.google.com/maps/dir/?api=1&destination=${Number(r.lat)},${Number(r.lng)}`;
+  dir.href = dirUrl(r);
   $('span', dir).textContent = s('directions');
   return li;
 }
 
 function telHref(phone) { return `tel:${String(phone || '').replace(/[^\d+]/g, '')}`; }
+function kmText(r) { return `${Number(r.distance_km).toFixed(1)} ${s('km')}`; }
+function grpText(g) { return String(g || '').replace('-', '−'); }
+function dirUrl(r) { return `https://www.google.com/maps/dir/?api=1&destination=${Number(r.lat)},${Number(r.lng)}`; }
+
+// ---------- share with family: one message with everything they need to act ----------
+function shareText(resp) {
+  const results = Array.isArray(resp.results) ? resp.results : [];
+  const top = results[0];
+  const heard = resp.heard || {};
+  const lines = [
+    s('sh_need', grpText(heard.blood_group || top.blood_group), Number(heard.units) || 1),
+    '',
+    `${s('sh_nearest')}: ${top.name} · ${kmText(top)}`,
+    `${s('call')}: ${top.phone}`,
+    `${s('directions')}: ${dirUrl(top)}`,
+  ];
+  const more = results.slice(1, 3);
+  if (more.length) lines.push('', `${s('sh_also')}:`, ...more.map((r) => `• ${r.name} · ${kmText(r)} · ${r.phone}`));
+  lines.push('', s('sh_confirm'));
+  if (resp.demo_data) lines.push(`(${s('demo')})`);
+  return lines.join('\n');
+}
+
+function shareBtn(resp) {
+  const b = el('button', 'btn btn-line share');
+  b.type = 'button';
+  b.append(svg('i-share'), el('span', '', s('share')));
+  b.addEventListener('click', async () => {
+    const text = shareText(resp);
+    if (navigator.share) {
+      // The phone's own share sheet: WhatsApp, SMS, anything installed.
+      try { await navigator.share({ text }); } catch (e) {
+        if (e.name === 'AbortError') return; // closed the sheet
+        try { await navigator.clipboard.writeText(text); statusEl.textContent = s('copied'); } catch { /* nothing more to try */ }
+      }
+      return;
+    }
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+  });
+  return b;
+}
 
 function callNearest(r) {
   const a = el('a', 'call-top');
   a.href = telHref(r.phone);
   const txt = el('span', 'call-top-txt');
-  txt.append(el('b', '', s('call_nearest')), el('span', '', s('call_nearest_sub', r.name, Number(r.distance_km).toFixed(1))));
-  const grp = el('span', 'call-top-grp', `${String(r.blood_group || '').replace('-', '−')} · ${s('units', r.units)}`);
+  txt.append(el('b', '', s('call_nearest')), el('span', '', `${r.name} · ${kmText(r)}`));
+  const grp = el('span', 'call-top-grp', `${grpText(r.blood_group)} · ${s('units', r.units)}`);
   a.append(svg('i-call'), txt, grp);
   return a;
 }
@@ -452,7 +524,7 @@ function actionBtn(iconId, label, onClick) {
 function fmtWhen(iso) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  const time = d.toLocaleTimeString(state.ui === 'hi' ? 'hi-IN' : 'en-IN', { hour: 'numeric', minute: '2-digit' });
+  const time = d.toLocaleTimeString(`${state.ui}-IN-u-nu-latn`, { hour: 'numeric', minute: '2-digit' });
   return d.toDateString() === new Date().toDateString() ? `${s('today')} ${time}` : time;
 }
 
@@ -499,20 +571,24 @@ $('#typeForm').addEventListener('submit', (e) => {
   locate();
   const body = { text, request_id: state.requestId };
   if (state.coords) Object.assign(body, state.coords);
-  converse(() => api('/api/search', { json: body }), text);
+  converse((signal) => api('/api/search', { json: body, signal }), text);
 });
 
 // ---------- main button ----------
 talk.addEventListener('click', () => {
   const mode = talk.dataset.state;
   if (mode === 'listening') { stopListening(true); return; }
-  if (mode === 'thinking') return;
+  if (mode === 'thinking') { state.abort?.abort(); return; }
   state.autoTurns = 0;
   listen();
 });
 $('#newChat').addEventListener('click', () => {
   stopReply();
   if (rec.mr) stopListening(false);
+  const running = state.abort;
+  state.abort = null;
+  state.busy = false;
+  running?.abort();
   state.requestId = null;
   state.autoTurns = 0;
   thread.replaceChildren();
@@ -539,4 +615,8 @@ function svg(id, cls = 'icon') {
 }
 function scrollDown() { requestAnimationFrame(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })); }
 
+initUi();
+if (!navigator.onLine) setOffline(true);
+// Keeps the screen (and the 108 / 104 buttons) opening when there is no internet.
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => { /* optional */ });
 preloadGeo();

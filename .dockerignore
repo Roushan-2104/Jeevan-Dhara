@@ -25,3 +25,6 @@ tests
 Dockerfile
 docker-compose.yml
 .dockerignore
+docker-compose.prod.yml
+Caddyfile
+requirements-dev.txt

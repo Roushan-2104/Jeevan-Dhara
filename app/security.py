@@ -83,13 +83,20 @@ def read_session(token: str | None) -> dict | None:
 
 # ---- rate limiting (in-memory sliding window; fine for one process) ----
 class RateLimiter:
+    SWEEP_EVERY = 500      # calls between clean-ups
+    FORGET_AFTER_S = 86400  # the longest window in use
+
     def __init__(self) -> None:
         self._hits: dict[str, deque[float]] = defaultdict(deque)
         self._lock = threading.Lock()
+        self._calls = 0
 
     def allow(self, key: str, limit: int, window_s: int) -> bool:
         now = time.monotonic()
         with self._lock:
+            self._calls += 1
+            if self._calls % self.SWEEP_EVERY == 0:
+                self._sweep(now)
             q = self._hits[key]
             while q and now - q[0] > window_s:
                 q.popleft()
@@ -97,6 +104,11 @@ class RateLimiter:
                 return False
             q.append(now)
             return True
+
+    def _sweep(self, now: float) -> None:
+        """Drop keys with no recent hit, so one-time visitors do not pile up in memory."""
+        for k in [k for k, q in self._hits.items() if not q or now - q[-1] > self.FORGET_AFTER_S]:
+            del self._hits[k]
 
 
 limiter = RateLimiter()

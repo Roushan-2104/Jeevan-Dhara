@@ -228,3 +228,65 @@ def test_answer_returns_before_voice_is_ready(client, monkeypatch):
     assert r["status"] == "results" and url.startswith("/media/")
     a = client.get(url)
     assert a.status_code == 200 and a.headers["content-type"] == "audio/mpeg" and len(a.content) > 100
+
+
+def test_limits_leave_room_for_a_real_emergency():
+    # Checked on a fresh Settings so a local .env override cannot hide a bad default.
+    from app.config import Settings
+
+    fields = Settings.model_fields
+    assert fields["user_requests_per_hour"].default >= 60
+    assert fields["ip_requests_per_hour"].default >= fields["user_requests_per_hour"].default
+    assert fields["global_requests_per_day"].default >= fields["ip_requests_per_hour"].default
+
+
+def test_limiter_forgets_idle_visitors():
+    lim = security.RateLimiter()
+    lim.SWEEP_EVERY = 3
+    lim.FORGET_AFTER_S = 0  # anything older than "now" counts as idle
+    assert lim.allow("ip:old", 5, 3600)
+    assert "ip:old" in lim._hits
+    import time
+
+    time.sleep(0.01)
+    lim.allow("ip:a", 5, 3600)
+    lim.allow("ip:b", 5, 3600)  # third call runs the clean-up
+    assert "ip:old" not in lim._hits
+    assert "ip:b" in lim._hits
+
+
+def test_limiter_still_blocks_after_cleanup():
+    lim = security.RateLimiter()
+    lim.SWEEP_EVERY = 2
+    assert [lim.allow("k", 2, 3600) for _ in range(4)] == [True, True, False, False]
+
+
+@pytest.mark.parametrize("path,kind", [
+    ("/sw.js", "javascript"),
+    ("/manifest.webmanifest", "json"),
+    ("/voice-i18n.js", "javascript"),
+])
+def test_offline_shell_files_are_served(client, path, kind):
+    r = client.get(path)
+    assert r.status_code == 200
+    assert kind in r.headers["content-type"]
+
+
+def test_service_worker_never_touches_answers():
+    from pathlib import Path
+
+    sw = (Path(__file__).resolve().parent.parent / "web" / "sw.js").read_text(encoding="utf-8")
+    assert "(api|media|webhooks)" in sw  # live answers and voice are always fetched fresh
+    for name in ("/voice.js", "/voice-i18n.js", "/voice.css"):
+        assert name in sw
+
+
+def test_offline_call_buttons_in_page(client):
+    html = client.get("/").text
+    assert 'id="offline"' in html and 'href="tel:108"' in html and 'href="tel:104"' in html
+
+
+@pytest.mark.parametrize("path", ["/", "/voice.js", "/voice.css", "/sw.js"])
+def test_page_files_are_always_rechecked(client, path):
+    # Without this a browser can keep an old page next to a new script after an update.
+    assert client.get(path).headers["cache-control"] == "no-cache"

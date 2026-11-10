@@ -125,15 +125,32 @@ class Place:
     score: float
 
 
+_places: tuple[list, dict[str, int], list[str]] | None = None
+
+
+def _place_index() -> tuple[list, dict[str, int], list[str]]:
+    """Gazetteer rows plus a name -> row lookup. Built once; seed.seed() calls forget_places() after a rewrite."""
+    global _places
+    if _places is None:
+        rows = db.query("SELECT name, alt_names, city, lat, lng FROM gazetteer")
+        choices: dict[str, int] = {}
+        for i, r in enumerate(rows):
+            for n in [r["name"], *[a for a in r["alt_names"].split("|") if a]]:
+                choices[n.lower()] = i
+        _places = (rows, choices, list(choices))
+    return _places
+
+
+def forget_places() -> None:
+    global _places
+    _places = None
+
+
 def lookup_place(text: str | None) -> Place | None:
     """Fuzzy-match a spoken/typed place against the gazetteer (names + native-script alt names)."""
     if not text or not text.strip():
         return None
-    rows = db.query("SELECT name, alt_names, city, lat, lng FROM gazetteer")
-    choices: dict[str, int] = {}
-    for i, r in enumerate(rows):
-        for n in [r["name"], *[a for a in r["alt_names"].split("|") if a]]:
-            choices[n.lower()] = i
+    rows, choices, names = _place_index()
     q = text.strip().lower()
     # Try the whole phrase, then each word / word pair, keep the most specific good match.
     words = re.findall(r"[\w.ऀ-෿‌‍]+", q)
@@ -142,7 +159,7 @@ def lookup_place(text: str | None) -> Place | None:
     for cand in candidates:
         if len(cand) < 3:
             continue
-        hit = process.extractOne(cand, list(choices.keys()), scorer=fuzz.WRatio, score_cutoff=86)
+        hit = process.extractOne(cand, names, scorer=fuzz.WRatio, score_cutoff=86)
         if hit:
             idx = choices[hit[0]]
             is_city = rows[idx]["name"] == rows[idx]["city"]

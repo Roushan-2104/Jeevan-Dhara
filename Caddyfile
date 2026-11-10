@@ -1,0 +1,6 @@
+# HTTPS for Jeevan Dhara. Caddy gets and renews the certificate by itself.
+# The microphone and the offline mode only work over HTTPS.
+{$DOMAIN} {
+	encode gzip
+	reverse_proxy jeevan-dhara:8000
+}

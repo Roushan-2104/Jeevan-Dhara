@@ -150,7 +150,7 @@ a { color: inherit; }
 .talk-ring { position: absolute; inset: -6px; border-radius: 50%; border: 3px solid var(--brand); opacity: 0; pointer-events: none; }
 .talk[data-state="listening"] .talk-ring { opacity: .55; transform: scale(calc(1 + var(--lvl) * .35)); transition: transform .08s linear; }
 .talk[data-state="listening"] { background: var(--brand-press); }
-.talk[data-state="thinking"] { background: #9AA3AD; box-shadow: none; cursor: progress; }
+.talk[data-state="thinking"] { background: #9AA3AD; box-shadow: none; cursor: pointer; }
 .talk[data-state="thinking"] .talk-ring { opacity: 1; border-color: var(--brand) transparent transparent transparent; animation: spin .9s linear infinite; }
 .talk[data-state="speaking"] { background: var(--ink); box-shadow: none; }
 .status { font-size: 15px; font-weight: 600; min-height: 24px; text-align: center; }
@@ -177,3 +177,15 @@ a { color: inherit; }
 @media (max-width: 360px) {
   .intro h1 { font-size: 21px; }
 }
+
+/* ---------- share with family ---------- */
+.share { flex: none; width: 100%; min-height: 48px; cursor: pointer; font-family: inherit; }
+.share .icon { fill: var(--brand); }
+
+/* ---------- no internet: calling still works ---------- */
+.offline { background: var(--surface); border: 1px solid var(--brand); border-radius: 12px; padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow); }
+.offline-head { display: flex; align-items: center; gap: 8px; font-size: 17px; }
+.offline-head .icon { width: 22px; height: 22px; fill: var(--brand); }
+.offline > p + p { color: var(--muted); margin-top: 2px; }
+.offline-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.offline-acts .btn { min-height: 52px; flex: 1 1 150px; font-size: 16px; }

@@ -115,3 +115,12 @@ def test_translation_must_keep_blood_group_letter():
     src = "A positive found. Nearest: T. Nagar Blood Centre, 1.1 km away, 7 units."
     assert groups_preserved(src, "A positive கண்டறியப்பட்டது. 1.1 கி.மீ., 7 அலகுகள்.")
     assert not groups_preserved(src, "நேர்மறை கண்டறியப்பட்டது. 1.1 கி.மீ., 7 அலகுகள்.")
+
+
+def test_place_list_is_built_once_and_can_be_dropped():
+    first = search._place_index()
+    assert search._place_index() is first
+    search.forget_places()
+    again = search._place_index()
+    assert again is not first
+    assert again[2] == first[2]

@@ -7,6 +7,7 @@
 <meta name="description" content="Jeevan Dhara: say what blood you need, in your language, and hear the nearest blood banks that have it.">
 <title>Jeevan Dhara · Talk to find blood</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&display=swap">
@@ -29,6 +30,7 @@
   <symbol id="i-keyboard" viewBox="0 0 24 24"><path d="M20 5H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></symbol>
   <symbol id="i-send" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></symbol>
   <symbol id="i-donors" viewBox="0 0 24 24"><path d="M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></symbol>
   <symbol id="i-volume" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06A9 9 0 0 0 14 3.23z"/></symbol>
 </svg>
 
@@ -48,10 +50,18 @@
 </header>
 
 <main id="main" class="convo" aria-label="Conversation">
+  <section id="offline" class="offline" role="alert" hidden>
+    <p class="offline-head"><svg class="icon" aria-hidden="true"><use href="#i-warning"/></svg><b data-t="offline_title">No internet</b></p>
+    <p data-t="offline_text">You can still call for help:</p>
+    <div class="offline-acts">
+      <a class="btn btn-red" href="tel:108"><svg class="icon" aria-hidden="true"><use href="#i-call"/></svg><span data-t="call_108">108 · Ambulance</span></a>
+      <a class="btn btn-line" href="tel:104"><svg class="icon" aria-hidden="true"><use href="#i-call"/></svg><span data-t="call_104">104 · Health helpline</span></a>
+    </div>
+  </section>
   <section id="intro" class="intro">
     <svg class="intro-drop" aria-hidden="true"><use href="#i-drop"/></svg>
-    <h1>Need blood? Just tell me.</h1>
-    <p class="intro-hi" lang="hi">बोलिए कौन सा खून चाहिए और कहाँ। किसी भी भाषा में।</p>
+    <h1 data-t="intro_title">Need blood? Just tell me.</h1>
+    <p id="introSub" class="intro-hi" lang="hi">बोलिए कौन सा खून चाहिए और कहाँ। किसी भी भाषा में।</p>
     <p class="intro-eg">“O negative, 2 units, near Jayanagar, Bengaluru”</p>
   </section>
   <ol id="thread" class="thread" aria-live="polite" aria-relevant="additions"></ol>
@@ -61,7 +71,7 @@
   <form id="typeForm" class="type-form" hidden>
     <label class="vh" for="typeIn" data-t="type_label">Type your request</label>
     <input id="typeIn" type="text" maxlength="400" autocomplete="off" enterkeyhint="send" placeholder="O+ 2 units near Andheri, Mumbai">
-    <button class="type-send" type="submit" aria-label="Send"><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg></button>
+    <button class="type-send" type="submit" aria-label="Send" data-t-aria="send"><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg></button>
   </form>
   <div class="dock-row">
     <button id="typeBtn" class="side-btn" type="button" aria-label="Type instead" data-t-aria="type_instead" aria-pressed="false">

@@ -84,6 +84,7 @@ async def lifespan(_: FastAPI):
     task.cancel()
     if warm:
         warm.cancel()
+    await gnani.aclose()
 
 
 app = FastAPI(title="Jeevan Dhara", lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
@@ -115,6 +116,10 @@ async def session_and_headers(request: Request, call_next):
     h["Referrer-Policy"] = "no-referrer"
     h["Permissions-Policy"] = "microphone=(self), geolocation=(self), camera=()"
     h["X-Frame-Options"] = "DENY"
+    if not request.url.path.startswith(("/api/", "/media/")) and "cache-control" not in h:
+        # Page, script and styles are checked with the server on every load (a cheap 304),
+        # so nobody is left with an old page and a new script after an update.
+        h["Cache-Control"] = "no-cache"
     if get_settings().public_base_url.startswith("https"):
         h["Strict-Transport-Security"] = "max-age=31536000"
     return response

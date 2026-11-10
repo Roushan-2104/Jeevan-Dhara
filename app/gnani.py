@@ -1,6 +1,7 @@
 """Gnani Vachana API: Prisma speech-to-text and Timbre text-to-speech."""
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import logging
 
@@ -22,6 +23,29 @@ class GnaniError(Exception):
     pass
 
 
+# One client for every call: the TLS connection to Gnani stays open between speech-to-text and
+# text-to-speech, and between turns, instead of being set up again each time.
+_client: httpx.AsyncClient | None = None
+_client_loop: asyncio.AbstractEventLoop | None = None
+
+
+def _http() -> httpx.AsyncClient:
+    global _client, _client_loop
+    loop = asyncio.get_running_loop()
+    if _client is None or _client.is_closed or _client_loop is not loop:  # a client belongs to one event loop
+        _client = httpx.AsyncClient(timeout=30, limits=httpx.Limits(max_keepalive_connections=4, keepalive_expiry=60))
+        _client_loop = loop
+    return _client
+
+
+async def aclose() -> None:
+    """Close the shared client (called when the server stops)."""
+    global _client, _client_loop
+    client, _client, _client_loop = _client, None, None
+    if client is not None and not client.is_closed:
+        await client.aclose()
+
+
 async def transcribe(wav: bytes, language_hint: str | None = None) -> tuple[str, str]:
     """Return (transcript, detected_language_code)."""
     s = get_settings()
@@ -30,9 +54,11 @@ async def transcribe(wav: bytes, language_hint: str | None = None) -> tuple[str,
     lang = language_hint if language_hint in STT_LANGS else "indic-auto"
     data = {"model": s.gnani_stt_model, "language_code": lang}
     files = {"audio_file": ("voice.wav", wav, "audio/wav")}
-    async with httpx.AsyncClient(timeout=25) as client:
-        r = await client.post(f"{s.gnani_base_url}/stt/v3", headers={"X-API-Key-ID": s.gnani_api_key},
-                              data=data, files=files)
+    try:
+        r = await _http().post(f"{s.gnani_base_url}/stt/v3", headers={"X-API-Key-ID": s.gnani_api_key},
+                               data=data, files=files, timeout=25)
+    except httpx.HTTPError as e:
+        raise GnaniError(f"STT request failed: {type(e).__name__}") from e
     if r.status_code != 200:
         log.warning("STT failed: %s %s", r.status_code, r.text[:300])
         raise GnaniError(f"STT HTTP {r.status_code}")
@@ -64,9 +90,11 @@ async def synthesize(text: str, language: str, cache: bool = False) -> bytes:
         "audio_config": {"sample_rate": 24000, "num_channels": 1, "sample_width": 2,
                          "encoding": "linear_pcm", "container": "wav"},
     }
-    async with httpx.AsyncClient(timeout=30) as client:
-        r = await client.post(f"{s.gnani_base_url}/api/v1/tts/inference",
-                              headers={"X-API-Key-ID": s.gnani_api_key}, json=payload)
+    try:
+        r = await _http().post(f"{s.gnani_base_url}/api/v1/tts/inference",
+                               headers={"X-API-Key-ID": s.gnani_api_key}, json=payload, timeout=30)
+    except httpx.HTTPError as e:
+        raise GnaniError(f"TTS request failed: {type(e).__name__}") from e
     if r.status_code != 200 or not r.content:
         log.warning("TTS failed: %s %s", r.status_code, r.text[:300] if r.content else "")
         raise GnaniError(f"TTS HTTP {r.status_code}")

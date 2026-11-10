@@ -68,20 +68,20 @@ Related: [Architecture](ARCHITECTURE.md) · [PRD](PRD.md) · [Security](SECURITY
 - Python: type hints, Pydantic models at every boundary, parameterised SQL, `subprocess` without shell.
 - Docs live in `docs/`; product context in `PRODUCT.md`; design system in `DESIGN.md` (written after build).
 
-## 5. Resume here (paused 10 Nov, early morning)
+## 5. Resume here (10 Nov, submission day)
 
-1. Start the server; test the real mic in Chrome at http://localhost:8000.
+1. Start it: `docker compose up --build -d`; test the real mic in Chrome at http://localhost:8000.
 2. Record the 60 s demo following [DEMO.md](DEMO.md) → post on LinkedIn/X (tags + hashtags) → submit before 11:59 PM IST.
-3. (Later, optional) WhatsApp: set `WHATSAPP_ENABLED=true`, run a tunnel yourself, `python -m app.set_url <url>`, set the Twilio sandbox webhook.
+3. (Later) Public hosting: `docker-compose.prod.yml` + `Caddyfile`, steps in the README.
+4. (Later, optional) WhatsApp: set `WHATSAPP_ENABLED=true`, run a tunnel yourself, `python -m app.set_url <url>`, set the Twilio sandbox webhook.
 
 ## 6. Open questions
 
-- [ ] Gnani API key active? Credits enough for testing + demo?
+- [ ] Which GitHub repository to push to (nothing is pushed yet).
+- [ ] A native speaker should read the screen text in each language (`web/voice-i18n.js`); it was not written by native speakers.
 - [ ] Solo or team entry (affects award category)?
-- [ ] Which languages to show in the 60-second demo (proposal: Hinglish, Kannada, Tamil)?
-- [ ] Public tunnel: cloudflared or ngrok?
 
-## 6. Build progress
+## 7. Build progress
 
 | Step | State |
 |---|---|
@@ -96,10 +96,13 @@ Related: [Architecture](ARCHITECTURE.md) · [PRD](PRD.md) · [Security](SECURITY
 | Donor registration + matching (P1, API-tested) | ✅ |
 | Demo film rendered: `video/remotion/out/jeevan-dhara-demo.mp4` (60 s, 1080p; rebuild: `video/` README steps) | ✅ |
 | Results-first latency + Call nearest + re-recorded film (76 tests) | ✅ |
+| Docker image (non-root, read-only, keys from `.env` at run time) | ✅ |
+| Higher request limits, cancel + 25 s timeout, screen text in 10 languages, Share with family, offline screen with 108/104, one shared connection to Gnani (89 tests) | ✅ |
+| HTTPS hosting files (`docker-compose.prod.yml`, `Caddyfile`; compose files validated, not yet run on a server) | 🟡 |
 | Real-phone test in a noisy room, 2–3 languages (owner: you) | ☐ |
 | Post on LinkedIn/X, submit | ☐ |
 
-## 7. Glossary
+## 8. Glossary
 
 | Term | Meaning |
 |---|---|
