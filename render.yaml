@@ -1,0 +1,31 @@
+# Render Blueprint: hosts the web app from this repo's Dockerfile.
+# In Render: New > Blueprint, pick this repo, then paste the two API keys when asked.
+# Keys are typed into Render only. They are never stored in this file or in git.
+services:
+  - type: web
+    name: jeevan-dhara
+    runtime: docker
+    plan: free            # sleeps after about 15 idle minutes; the first visit then takes about a minute
+    region: singapore     # the closest Render region to India
+    branch: main
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Secrets: Render asks for these once, in its own form.
+      - key: GNANI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      # Render makes this one itself. Logins reset only if you delete the service.
+      - key: SECRET_KEY
+        generateValue: true
+      # Synthetic blood bank data only.
+      - key: DEMO_MODE
+        value: "true"
+      - key: REQUIRE_LOGIN
+        value: "false"
+      # Only Render's own proxy can reach the app, so its visitor address header is trusted.
+      # This lets the request limit count each visitor, not the proxy.
+      - key: FORWARDED_ALLOW_IPS
+        value: "*"

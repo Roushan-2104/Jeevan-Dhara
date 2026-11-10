@@ -32,4 +32,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=4).status == 200 else 1)"
 
 # One worker on purpose: the rate limiter and the pending-voice table live in process memory.
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# A host such as Render sets PORT and RENDER_EXTERNAL_URL; without them this is port 8000 on this machine.
+CMD ["sh", "-c", "PUBLIC_BASE_URL=\"${PUBLIC_BASE_URL:-${RENDER_EXTERNAL_URL:-http://127.0.0.1:8000}}\" exec python -m uvicorn app.main:app --host 0.0.0.0 --port \"${PORT:-8000}\""]
